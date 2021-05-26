@@ -25,16 +25,12 @@ Scene::Scene():
         {TERRAIN_FLATSHADER_VERT_LOC, GL_VERTEX_SHADER},
         {TERRAIN_FLATSHADER_FRAG_LOC, GL_FRAGMENT_SHADER}
       }
-    },
-    {
-      "AABB_baseShader",
-      {
-        {AABB_BASESHADER_VERT_LOC, GL_VERTEX_SHADER},
-        {AABB_BASESHADER_FRAG_LOC, GL_FRAGMENT_SHADER}
-      }
     }
   };
   sm_ = ShaderManager(list);
+
+
+  dynamicsWorld_->setGravity(btVector3(0, -3, 0));
 }
 
 Scene::~Scene(){}
@@ -75,22 +71,80 @@ void Scene::setupScene(){
   defineMaterials();
   defineMeshes();
 
+
   for(unsigned int i = 0; i < 10; i ++){
     models_.push_back(Model(&meshes_.at("container"), "mainShader", sm_.program("mainShader"),
           glm::vec3(5 * cos(i), 2.0f, 5 * sin(i))));
-    models_.back().getBoundingShape()->constructFromVertices(meshes_["container"].getVertices());
   }
   
   //theire model 
   for(unsigned int i = 0; i < 1; i++){
     models_.push_back(Model(&meshes_.at("theiere"), "mainShader", sm_.program("mainShader"),
-          glm::vec3(15.0f * cos(i), i, 15.0f * sin(i))));
-    models_.back().getBoundingShape()->constructFromVertices(meshes_["theiere"].getVertices());
+          glm::vec3(15.0f * cos(i), 100.0f, 15.0f * sin(i))));
   }
 
   // mirror
-  mirrors_.push_back(Mirror(&meshes_.at("container"), sm_.program("mainShader"),
-        glm::vec3(10.0f, 4.0f, 10.0f)));
+  //mirrors_.push_back(Mirror(&meshes_.at("container"), sm_.program("mainShader"),
+  //      glm::vec3(10.0f, 4.0f, 10.0f)));
+
+  /* Bullet Physics */
+
+  { //ground 
+    btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(50.), btScalar(50.), btScalar(50.)));
+
+    collisionShapes_.push_back(groundShape);
+
+    btTransform groundTransform;
+    groundTransform.setIdentity();
+    groundTransform.setOrigin(btVector3(0, -56, 0));
+
+    btScalar mass(0.);
+    //rigidbody is dynamic if and only if mass is non zero, otherwise static
+    bool isDynamic = (mass != 0.f);
+
+    btVector3 localInertia(0, 0, 0);
+    if (isDynamic)
+        groundShape->calculateLocalInertia(mass, localInertia);
+
+    btDefaultMotionState* myMotionState = new btDefaultMotionState(groundTransform);
+    btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, groundShape, localInertia);
+    btRigidBody* body = new btRigidBody(rbInfo);
+
+    //add the body to the dynamics world
+    dynamicsWorld_->addRigidBody(body);
+  }
+  { // (theiere, dynamic rigib body)
+    //btCollisionShape* colShape = new btBoxShape(btVector3(1,1,1));
+    btCollisionShape* colShape = new btSphereShape(btScalar(1.));
+    collisionShapes_.push_back(colShape);
+
+    /// Create Dynamic Objects
+    btTransform startTransform;
+    startTransform.setIdentity();
+    btVector3 initialPosition = btVector3(models_.back().getPosition().r, models_.back().getPosition().g,
+        models_.back().getPosition().b);
+    startTransform.setOrigin(initialPosition);
+
+    btScalar mass(1.f);
+
+    //rigidbody is dynamic if and only if mass is non zero, otherwise static
+    bool isDynamic = (mass != 0.f);
+
+    btVector3 localInertia(0, 0, 0);
+    if (isDynamic)
+        colShape->calculateLocalInertia(mass, localInertia);
+
+    //startTransform.setOrigin(btVector3(2, 10, 0));
+
+    //using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
+    btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
+    btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
+    btRigidBody* body = new btRigidBody(rbInfo);
+
+    dynamicsWorld_->addRigidBody(body);
+  }
+
+  /* End of Bullet Physics init */
 
   /* Initialization of lights */
   lights_ = {
@@ -116,6 +170,8 @@ void Scene::drawScene(float deltaTime){
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+  physics();   
+
   // definition of matrices:
   if(State::perspective_){
     projectionMatrix_ = glm::perspective(glm::radians(45.0f),
@@ -137,7 +193,7 @@ void Scene::drawScene(float deltaTime){
 
   drawEntities();
   drawLights();
-  drawTerrain();
+  //drawTerrain();
 }
 
 
@@ -183,11 +239,6 @@ void Scene::drawEntities(){
       it->second.first.setUniform("mvp", mvp_);
       it->second.first.setUniform("model", modelMatrix_);
       it->second.second[i]->draw();
-
-      sm_.at("AABB_baseShader").first.useProgram();
-      it->second.second[i]->drawBoundingVolume();
-
-      checkForCollision();
     }
   }
 }
@@ -198,6 +249,35 @@ void Scene::drawTerrain(){
   sm_.program("terrain_flatShader")->setUniformLights(lights_);
 
   terrain_.draw(modelMatrix_, viewMatrix_, projectionMatrix_, *sm_.program("terrain_flatShader"));
+}
+
+void Scene::physics(){
+  dynamicsWorld_->stepSimulation(1.0f / 60.0f, 10);
+
+  //print position of objects
+  for (int j = dynamicsWorld_->getNumCollisionObjects() - 1; j >= 0; j--)
+  {
+      btCollisionObject* obj = dynamicsWorld_->getCollisionObjectArray()[j];
+      btRigidBody* body = btRigidBody::upcast(obj);
+      btTransform trans;
+      if (body && body->getMotionState())
+      {
+          body->getMotionState()->getWorldTransform(trans);
+      }
+      else
+      {
+          trans = obj->getWorldTransform();
+      }
+      if(j == 1){
+        models_.back().setPosition(glm::vec3(float(trans.getOrigin().getX()),
+            float(trans.getOrigin().getY()), float(trans.getOrigin().getZ())));
+      }
+
+      printf("world pos object %d = %f,%f,%f\n",
+          j, float(trans.getOrigin().getX()),
+          float(trans.getOrigin().getY()), float(trans.getOrigin().getZ()));
+  }
+  std::cout << "\n" << std::endl;
 }
 
 
@@ -237,27 +317,4 @@ void Scene::drawMirrors(){
     //glDisable(GL_BLEND);    
 }
 
-//TODO mettre a jour les min et max quand on translate un Model
-void Scene::checkForCollision(){
-  for(size_t i = 0; i < models_.size() - 1; i++){
-    for(size_t j = i + 1; j < models_.size(); j++){
-      if(models_[i].getBoundingShape()->getMax().r < models_[j].getBoundingShape()->getMin().r ||
-          models_[i].getBoundingShape()->getMin().r > models_[j].getBoundingShape()->getMax().r){
-        //no collision
-      }
-      else if(models_[i].getBoundingShape()->getMax().g < models_[j].getBoundingShape()->getMin().g ||
-          models_[i].getBoundingShape()->getMin().g > models_[j].getBoundingShape()->getMax().g){
-        //no collision
-      }
-      else if(models_[i].getBoundingShape()->getMax().b < models_[j].getBoundingShape()->getMin().b ||
-          models_[i].getBoundingShape()->getMin().b > models_[j].getBoundingShape()->getMax().b){
-        //no collision
-      }
 
-      else{
-        //only then we have a collision:
-        //std::cout << "collision between " << i << " and " << j << std::endl;
-      }
-    }
-  }
-}

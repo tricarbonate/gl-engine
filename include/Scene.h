@@ -3,6 +3,7 @@
 
 #include "includes.h"
 
+#include <bullet/btBulletDynamicsCommon.h>
 
 #include <vector>
 #include <map>
@@ -30,6 +31,8 @@ class Scene{
     void drawMirrors();
 
     Camera* getCamera() { return &camera_; }
+
+    void physics();
 
   private:
 
@@ -65,7 +68,27 @@ class Scene{
     // draw the terrain
     void drawTerrain();
 
-    void checkForCollision();
+
+    /* Bullet Physics */
+
+    //setup default configuration for collision detection
+    btDefaultCollisionConfiguration* collisionConfiguration_ = new btDefaultCollisionConfiguration();
+     
+    btCollisionDispatcher* dispatcher_ = new btCollisionDispatcher(collisionConfiguration_);
+
+	btBroadphaseInterface* overlappingPairCache_ = new btDbvtBroadphase();
+
+    btSequentialImpulseConstraintSolver* solver_ = new btSequentialImpulseConstraintSolver;
+
+	btDiscreteDynamicsWorld* dynamicsWorld_ = new btDiscreteDynamicsWorld(dispatcher_,
+        overlappingPairCache_, solver_, collisionConfiguration_);
+
+
+    btAlignedObjectArray<btCollisionShape*> collisionShapes_;
+
+    /* */ 
+
+    int frameCounter_ = 0;
 };
 
 

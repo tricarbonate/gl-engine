@@ -5,8 +5,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Mesh.h"
-#include "BoundingShape.h"
-#include "AABB.h"
 
 class Model {
 
@@ -16,13 +14,16 @@ class Model {
         glm::vec3 position);
     
     void draw();
-    void drawBoundingVolume();
 
     std::pair<const char*, ShaderProgram*> getShaderProgram() const { return shaderProgram_; }
-
+    
+    // getters
     Mesh* getMesh() { return mesh_; }
     glm::vec3 getPosition() { return position_; }
     glm::vec3 getOrientation() { return orientation_; }
+
+    // setters
+    void setPosition(glm::vec3 position) { position_ = position; }
 
     void setOrientation(glm::vec3 orientation) {orientation_ = orientation;}
 
@@ -30,15 +31,11 @@ class Model {
 
     void updatePosition(float deltaTime);
 
-    AABB* getBoundingShape() {return &boundingShape_;}
 
   private:
     // pointer to the mesh representing the model
     Mesh* mesh_;
     
-    // bounding volume for collision detection of the model
-    AABB boundingShape_;
-
     // pointer to the shader program
     // used to render the model:
     std::pair<const char*, ShaderProgram*> shaderProgram_;

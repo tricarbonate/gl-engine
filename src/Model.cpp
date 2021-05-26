@@ -26,11 +26,6 @@ void Model::draw(){
   mesh_->renderMesh(*shaderProgram_.second, false);  
 }
 
-void Model::drawBoundingVolume(){
-  boundingShape_.draw();
-}
-
-
 void Model::accelerate(glm::vec3 acceleration){
   this->currentSpeed_ += acceleration;
 }
