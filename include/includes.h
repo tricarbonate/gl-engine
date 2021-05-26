@@ -38,24 +38,17 @@
 #define GRASS_TEX_LOC "textures/grass.jpg"
 
 // shader programs locations
-#define SHADERPROGRAM_VERT_LOC "shaders/vertexShader.txt"
-#define SHADERPROGRAM_FRAG_LOC "shaders/fragmentShader.txt"
-#define LIGHTINGSHADER_VERT_LOC "shaders/lightVert.txt"
-#define LIGHTINGSHADER_FRAG_LOC "shaders/lightFrag.txt"
-#define CUBESHADER_VERT_LOC "shaders/cubeShaderVert.txt"
-#define CUBESHADER_FRAG_LOC "shaders/cubeShaderFrag.txt"
-#define INSTANCED_VERT_LOC "shaders/instancedVert.txt"
-#define INSTANCED_FRAG_LOC "shaders/instancedFrag.txt"
+#define SHADERPROGRAM_VERT_LOC "shaders/models/default-vert.glsl"
+#define SHADERPROGRAM_FRAG_LOC "shaders/models/default-frag.glsl"
+
+// shader programs for lights
+#define LIGHTINGSHADER_VERT_LOC "shaders/lights/light-vert.glsl"
+#define LIGHTINGSHADER_FRAG_LOC "shaders/lights/light-frag.glsl"
 
 // terrain shader programs
-#define TERRAIN_FLATSHADER_VERT_LOC "shaders/terrainFlatShaderVert.txt"
-#define TERRAIN_FLATSHADER_FRAG_LOC "shaders/terrainFlatShaderFrag.txt"
-#define TERRAIN_FLATSHADER_TESSC_LOC "shaders/terrainFlatShaderTessC.txt"
-#define TERRAIN_FLATSHADER_TESSE_LOC "shaders/terrainFlatShaderTessE.txt"
-
-
-// bounding volumes shaders
-#define AABB_BASESHADER_VERT_LOC "shaders/aabbBaseShaderVert.txt"
-#define AABB_BASESHADER_FRAG_LOC "shaders/aabbBaseShaderFrag.txt"
+#define TERRAIN_FLATSHADER_VERT_LOC "shaders/terrain/flat-terrain-vert.glsl"
+#define TERRAIN_FLATSHADER_FRAG_LOC "shaders/terrain/flat-terrain-frag.glsl"
+#define TERRAIN_FLATSHADER_TESSC_LOC "shaders/terrain/flat-terrain-tessc.glsl"
+#define TERRAIN_FLATSHADER_TESSE_LOC "shaders/terrain/flat-terrain-tesse.glsl"
 
 #endif // __INCLUDES_H__
