@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+# Ignore bin, build, and tags directory
+bin
+build
