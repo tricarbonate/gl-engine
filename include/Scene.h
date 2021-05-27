@@ -4,12 +4,14 @@
 #include "includes.h"
 
 #include <bullet/btBulletDynamicsCommon.h>
+//#include <bullet/btHeightfieldTerrainShape.h>
 
 #include <vector>
 #include <map>
 #include <unordered_map>
 
-static const double GRAVITY_ACCELERATION = -0.0;
+
+//static const double GRAVITY_ACCELERATION = -0.0;
 
 /*
  * The scene contains all the elements
@@ -76,15 +78,17 @@ class Scene{
      
     btCollisionDispatcher* dispatcher_ = new btCollisionDispatcher(collisionConfiguration_);
 
-	btBroadphaseInterface* overlappingPairCache_ = new btDbvtBroadphase();
+    btBroadphaseInterface* overlappingPairCache_ = new btDbvtBroadphase();
 
     btSequentialImpulseConstraintSolver* solver_ = new btSequentialImpulseConstraintSolver;
 
-	btDiscreteDynamicsWorld* dynamicsWorld_ = new btDiscreteDynamicsWorld(dispatcher_,
-        overlappingPairCache_, solver_, collisionConfiguration_);
+    btDiscreteDynamicsWorld* dynamicsWorld_ = new btDiscreteDynamicsWorld(dispatcher_,
+	overlappingPairCache_, solver_, collisionConfiguration_);
 
 
     btAlignedObjectArray<btCollisionShape*> collisionShapes_;
+
+    Model* findModel(btRigidBody* body);
 
     /* */ 
 

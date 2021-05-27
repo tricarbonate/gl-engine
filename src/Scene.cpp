@@ -1,6 +1,7 @@
 #include "../include/Scene.h"
 
 Scene::Scene():
+  terrain_(Terrain()),
   models_(std::vector<Model>())
 {
   //initialize shader programs
@@ -28,7 +29,6 @@ Scene::Scene():
     }
   };
   sm_ = ShaderManager(list);
-
 
   dynamicsWorld_->setGravity(btVector3(0, -3, 0));
 }
@@ -75,30 +75,29 @@ void Scene::setupScene(){
   for(unsigned int i = 0; i < 10; i ++){
     models_.push_back(Model(&meshes_.at("container"), "mainShader", sm_.program("mainShader"),
           glm::vec3(5 * cos(i), 2.0f, 5 * sin(i))));
+    models_.back().initPhysics(dynamicsWorld_, COLLISION_SHAPES::CUBE);
   }
   
   //theire model 
   for(unsigned int i = 0; i < 1; i++){
     models_.push_back(Model(&meshes_.at("theiere"), "mainShader", sm_.program("mainShader"),
-          glm::vec3(15.0f * cos(i), 100.0f, 15.0f * sin(i))));
+          glm::vec3(4.0f * cos(i), 100.0f, 0.0f * sin(i))));
+    models_.back().initPhysics(dynamicsWorld_, COLLISION_SHAPES::CUBE, 0.8f);
   }
 
-  // mirror
-  //mirrors_.push_back(Mirror(&meshes_.at("container"), sm_.program("mainShader"),
-  //      glm::vec3(10.0f, 4.0f, 10.0f)));
 
   /* Bullet Physics */
 
-  { //ground 
-    btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(50.), btScalar(50.), btScalar(50.)));
+  { // terrain
+    btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(50.0f), btScalar(1.0f), btScalar(50.0f)));
 
     collisionShapes_.push_back(groundShape);
 
     btTransform groundTransform;
     groundTransform.setIdentity();
-    groundTransform.setOrigin(btVector3(0, -56, 0));
+    groundTransform.setOrigin(btVector3(0, terrain_.getBaseHeight() - 1.0f, 0));
 
-    btScalar mass(0.);
+    btScalar mass(0);
     //rigidbody is dynamic if and only if mass is non zero, otherwise static
     bool isDynamic = (mass != 0.f);
 
@@ -111,36 +110,6 @@ void Scene::setupScene(){
     btRigidBody* body = new btRigidBody(rbInfo);
 
     //add the body to the dynamics world
-    dynamicsWorld_->addRigidBody(body);
-  }
-  { // (theiere, dynamic rigib body)
-    //btCollisionShape* colShape = new btBoxShape(btVector3(1,1,1));
-    btCollisionShape* colShape = new btSphereShape(btScalar(1.));
-    collisionShapes_.push_back(colShape);
-
-    /// Create Dynamic Objects
-    btTransform startTransform;
-    startTransform.setIdentity();
-    btVector3 initialPosition = btVector3(models_.back().getPosition().r, models_.back().getPosition().g,
-        models_.back().getPosition().b);
-    startTransform.setOrigin(initialPosition);
-
-    btScalar mass(1.f);
-
-    //rigidbody is dynamic if and only if mass is non zero, otherwise static
-    bool isDynamic = (mass != 0.f);
-
-    btVector3 localInertia(0, 0, 0);
-    if (isDynamic)
-        colShape->calculateLocalInertia(mass, localInertia);
-
-    //startTransform.setOrigin(btVector3(2, 10, 0));
-
-    //using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
-    btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
-    btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
-    btRigidBody* body = new btRigidBody(rbInfo);
-
     dynamicsWorld_->addRigidBody(body);
   }
 
@@ -193,7 +162,7 @@ void Scene::drawScene(float deltaTime){
 
   drawEntities();
   drawLights();
-  //drawTerrain();
+  drawTerrain();
 }
 
 
@@ -227,8 +196,6 @@ void Scene::drawEntities(){
       // translate and rotate each model to its correct position and orientation
       // and send model and mvp to shader
       modelMatrix_ = glm::mat4(1.0f); 
-      it->second.second[i]->accelerate(glm::vec3(cos(test_ * i / 2) / 8, GRAVITY_ACCELERATION * deltaTime_, 0.0f));
-      it->second.second[i]->updatePosition(deltaTime_);
       modelMatrix_ = glm::translate(modelMatrix_, it->second.second[i]->getPosition());
 
       modelMatrix_ = glm::rotate(modelMatrix_, it->second.second[i]->getOrientation().r, glm::vec3(1, 0, 0));
@@ -254,67 +221,55 @@ void Scene::drawTerrain(){
 void Scene::physics(){
   dynamicsWorld_->stepSimulation(1.0f / 60.0f, 10);
 
+
   //print position of objects
   for (int j = dynamicsWorld_->getNumCollisionObjects() - 1; j >= 0; j--)
   {
       btCollisionObject* obj = dynamicsWorld_->getCollisionObjectArray()[j];
       btRigidBody* body = btRigidBody::upcast(obj);
       btTransform trans;
-      if (body && body->getMotionState())
-      {
+      if (body && body->getMotionState()) {
           body->getMotionState()->getWorldTransform(trans);
       }
-      else
-      {
+      else {
           trans = obj->getWorldTransform();
       }
-      if(j == 1){
-        models_.back().setPosition(glm::vec3(float(trans.getOrigin().getX()),
-            float(trans.getOrigin().getY()), float(trans.getOrigin().getZ())));
+      // update model position and orientation
+      if(findModel(body) != nullptr){
+        findModel(body)->updatePosition(trans);
       }
-
-      printf("world pos object %d = %f,%f,%f\n",
-          j, float(trans.getOrigin().getX()),
-          float(trans.getOrigin().getY()), float(trans.getOrigin().getZ()));
   }
-  std::cout << "\n" << std::endl;
+
+  //for (int i = 0; i < models_.size(); i++){
+  //  models_[i].updatePosition();
+  //}
+  std::cout << "\n";
 }
 
-
-// TODO
-void Scene::drawMirrors(){
-    /* 1- 
-     * the stencil test never passes, nothing is drawn, but stencil 
-     * takes 1s at the mirrors position
-     */
-    glEnable(GL_STENCIL_TEST);
-    glStencilFunc(GL_NEVER, 1, 1);
-    glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
-
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
-    mirrors_[0].draw();
-    glDisable(GL_CULL_FACE);
-
-    /* 2-
-     * Draws the reflected content of the mirror :
-     */
-    glStencilFunc(GL_EQUAL, 1, 1);
-    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-        glm::translate(modelMatrix_, glm::vec3(2.0f, 0.0f, 0.0f));
-        glm::scale(modelMatrix_, glm::vec3(-1.0, 1.0, 1.0));
-        glm::translate(modelMatrix_, glm::vec3(-2.0f, 0.0f, 0.0f));
-    this->drawScene(deltaTime_);
-    glDisable(GL_STENCIL_TEST);
-
-
-    /* 3-
-     * Draw the mirror as a transparent glass
-     */
-    //glEnable(GL_BLEND);
-    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    mirrors_[0].draw();
-    //glDisable(GL_BLEND);    
+Model* Scene::findModel(btRigidBody* body){
+  for (size_t i = 0; i < models_.size(); i++){
+    if(body != nullptr && models_[i].getRigidBody() != nullptr){
+      if(body == models_[i].getRigidBody()){
+        return &models_[i];
+      }
+    } else{
+      std::cout << "nullptr" << std::endl;
+    }
+  }
+  std::cout << "did not work" << std::endl;
+  return nullptr;
 }
+
+// TODO have deltaTime_ and bullet physics related
+// TODO have lights move with deltaTime
+//
+// TODO class that handles movement,
+// physics variables, communication with bullet physics in relation with deltaTime
+//
+// TODO btHeightfield
+// TODO Find a real idea
+// TODO ImGUI initialization
+
+
 
 

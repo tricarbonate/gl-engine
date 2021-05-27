@@ -1,6 +1,7 @@
 #include "../include/Terrain.h"
 
-Terrain::Terrain()
+Terrain::Terrain() :
+    baseHeight_(-10.0f)
 {
     chunks_.resize(xMapChunk * zMapChunk);
     for(int x = 0; x < xMapChunk; x++){
@@ -33,7 +34,7 @@ void Terrain::draw(glm::mat4 &model, glm::mat4& view, glm::mat4 &proj, ShaderPro
 
            model = glm::mat4(1.0f); 
            model = glm::translate(model, glm::vec3(-chunkWidth / 2.0 + (chunkWidth - 1) * x,
-                       -10.0,
+                       baseHeight_,
                        -chunkHeight / 2.0 + (chunkHeight - 1) * z));
 
            glm::mat4 mvp = proj * view * model;

@@ -24,8 +24,15 @@ class Terrain{
     //
     void draw(glm::mat4 &model, glm::mat4 &view, glm::mat4 &proj, ShaderProgram &shaderProgram);
 
+    const std::vector<Chunk>& getChunks() { return chunks_; }
+
+    //getters
+    double getBaseHeight() { return baseHeight_; }
+
   private:
     std::vector<Chunk> chunks_;    
+
+    double baseHeight_;
 };
 
 #endif // __TERRAIN_H__

@@ -12,7 +12,7 @@
 
 //noise params
 const int octaves = 5;
-const float meshHeight = 32;  // Vertical scaling
+const float meshHeight = 0;  // Vertical scaling
 const float noiseScale = 64;  // Horizontal scaling
 const float persistence = 0.5;
 const float lacunarity = 2;

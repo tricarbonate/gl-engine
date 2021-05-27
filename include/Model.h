@@ -6,6 +6,13 @@
 
 #include "Mesh.h"
 
+#include <bullet/btBulletDynamicsCommon.h>
+
+enum COLLISION_SHAPES{
+  CUBE,
+  SPHERE
+};
+
 class Model {
 
   public:
@@ -27,10 +34,15 @@ class Model {
 
     void setOrientation(glm::vec3 orientation) {orientation_ = orientation;}
 
-    void accelerate(glm::vec3 acceleration);
+    //void accelerate(glm::vec3 acceleration);
 
-    void updatePosition(float deltaTime);
+    void updatePosition(btTransform trans);
 
+    void initPhysics(btDiscreteDynamicsWorld* dynamicsWorld, COLLISION_SHAPES shape, double data = 0.5);
+
+    void setTransform(btTransform trans) { trans_ = trans; }
+
+    btRigidBody* getRigidBody() { return body_; }
 
   private:
     // pointer to the mesh representing the model
@@ -43,6 +55,10 @@ class Model {
     glm::vec<3, double, glm::defaultp> position_;
     glm::vec<3, double, glm::defaultp> orientation_; // object orientation on its axis
     glm::vec<3, double, glm::defaultp> currentSpeed_;
+
+    btCollisionShape* collisionShape_;
+    btRigidBody* body_;
+    btTransform trans_;
 };
 
 #endif // MODEL_H

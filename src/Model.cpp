@@ -26,11 +26,43 @@ void Model::draw(){
   mesh_->renderMesh(*shaderProgram_.second, false);  
 }
 
-void Model::accelerate(glm::vec3 acceleration){
-  this->currentSpeed_ += acceleration;
+void Model::updatePosition(btTransform trans){
+  position_.r = (double)trans.getOrigin().getX();
+  position_.g = (double)trans.getOrigin().getY();
+  position_.b = (double)trans.getOrigin().getZ();
+
+  btScalar angles[3];
+  trans.getRotation().getEulerZYX(angles[2], angles[1], angles[0]);
+  orientation_.r = angles[0];
+  orientation_.g = angles[1];
+  orientation_.b = angles[2];
+
 }
 
+void Model::initPhysics(btDiscreteDynamicsWorld* dynamicsWorld, COLLISION_SHAPES shape, double data){
+  if(shape == COLLISION_SHAPES::CUBE){
+    collisionShape_ = new btBoxShape(btVector3(data, data, data));
+  }
+  else if (shape == COLLISION_SHAPES::SPHERE){
+    collisionShape_ = new btSphereShape(btScalar(data));
+  }
+  
+  btTransform startTransform;
+  startTransform.setIdentity();
+  btVector3 initialPosition = btVector3(position_.r, position_.g, position_.b);
+  startTransform.setOrigin(initialPosition);
+  
+  btScalar mass(1.f);
 
-void Model::updatePosition(float deltaTime){
-  this->position_ += currentSpeed_ * (double)deltaTime;
+  bool isDynamic = (mass != 0.f);
+  btVector3 localInertia(0, 0, 0);
+  if(isDynamic){
+    collisionShape_->calculateLocalInertia(mass, localInertia);
+  }
+
+  btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
+  btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, collisionShape_, localInertia);
+  body_ = new btRigidBody(rbInfo);
+
+  dynamicsWorld->addRigidBody(body_);
 }
