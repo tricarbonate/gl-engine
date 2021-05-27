@@ -1,4 +1,4 @@
-#include "../include/DataFormatter.h"
+#include "../include/DataFormat.h"
 
 namespace DataFormat{ 
 

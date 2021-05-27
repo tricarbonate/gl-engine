@@ -265,18 +265,25 @@ Model* Scene::findModel(btRigidBody* body){
 }
 
 // TODO have lights move with deltaTime
+// TODO better lighting system, (maybe Entity class?)
 //
 // TODO class that handles movement,
 // physics variables, communication with bullet physics in relation with deltaTime
 //
 // TODO btHeightfield
+//
 // TODO Find a real idea
-// TODO ImGUI initialization
+//
+// TODO More State Handling to use imgui
+// TODO More imgui functionalities
 
+// TODO Scene class should only contain entities initialization and drawing.
+// :
 
 // TODO reorganize .h and .cpp files
 // TODO find a solution to not have include/includes.h
 
-// TODO reorganize utils.h and utils.cpp 
+// TODO Mouse picking (with bullet physics?)
+// TODO Controller inputs?
 
 

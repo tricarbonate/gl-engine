@@ -11,8 +11,6 @@
 #include <unordered_map>
 
 
-//static const double GRAVITY_ACCELERATION = -0.0;
-
 /*
  * The scene contains all the elements
  * to render */
@@ -25,12 +23,7 @@ class Scene{
 
     void setupScene();
 
-    // setup matrices values
-    // and call drawLights(), drawEntities() and drawTerrain()
     void drawScene(float deltaTime);
-
-    // draw the mirrors
-    void drawMirrors();
 
     Camera* getCamera() { return &camera_; }
 
@@ -48,7 +41,7 @@ class Scene{
 
     ShaderManager sm_; 
 
-    float deltaTime_;
+    double deltaTime_;
 
     double test_ = 0.0f;
 
@@ -91,7 +84,6 @@ class Scene{
     Model* findModel(btRigidBody* body);
 
     /* */ 
-
     int frameCounter_ = 0;
 };
 

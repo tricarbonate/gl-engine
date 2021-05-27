@@ -10,8 +10,6 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "Mesh.h"
-
 int failed(std::string message);
 
 float getDeltaTime(float &lastFrame);
