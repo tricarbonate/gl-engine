@@ -3,27 +3,15 @@
 
 #include "Texture.h"
 #include "ShaderProgram.h"
+#include "DataStructures.h"
 
 #include <iostream>
 
 #include <GLFW/glfw3.h>
 
-struct Vertex{
-  glm::vec3 position;
-  glm::vec3 normal;
-  glm::vec2 texCoords;
-};
+#include <bullet/btBulletDynamicsCommon.h>
 
-//Material contains textures for diffuse maps
-// specular maps, normal maps, height maps
-// and a shininess factor
-struct Material{
-  Texture* diffuse;
-  Texture* specular;
-  Texture* normal;
-  Texture* height;
-  float shininess;
-};
+
 
 class Mesh 
 {
@@ -42,10 +30,15 @@ class Mesh
     void renderMesh();
     void renderMesh(ShaderProgram& shader, bool indices);
 
+    // getters
     Material& getMaterial() { return material_; }
 
     const std::vector<Vertex>& getVertices() const {return vertices_;}
     GLuint getVAO() const { return vao_; }
+
+    btScalar* getVerticesCoordinates();
+    unsigned int getNumVertices() { return vertices_.size(); }
+    const std::vector<GLuint>& getIndices() { return indices_; }
 
   protected:
 

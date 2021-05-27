@@ -93,6 +93,18 @@ void Mesh::createInstanced(std::vector<glm::vec3> offsets){
   offsets_ = offsets;
 }
 
+//very inefficient way to return only the coordinates 
+btScalar* Mesh::getVerticesCoordinates(){
+  static std::vector<btScalar> coordinates;
+  for(int i = 0; i < vertices_.size(); i++){
+    coordinates.push_back(btScalar(vertices_[i].position.r));
+    coordinates.push_back(btScalar(vertices_[i].position.g));
+    coordinates.push_back(btScalar(vertices_[i].position.b));
+  }
+
+  return &coordinates[0];
+}
+
 void Mesh::renderMesh(ShaderProgram& shader, bool indices){
   /* glActiveTexture(GL_TEXTURE0); */
   /* shader.setUniform("material.diffuse", (unsigned int)0); */

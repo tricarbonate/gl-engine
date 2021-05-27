@@ -49,19 +49,19 @@ void Scene::defineMaterials(){
 }
 
 void Scene::defineMeshes(){
-  meshes_["container"] = Mesh(getVerticesFromArray(vertices, 36), 
+  meshes_["container"] = Mesh(DataFormat::getVerticesFromArray(vertices, 36), 
       materials_.at("container"), std::vector<GLuint>());
 
-  meshes_["instancedContainer"] = Mesh(getVerticesFromArray(vertices, 36),
+  meshes_["instancedContainer"] = Mesh(DataFormat::getVerticesFromArray(vertices, 36),
       materials_.at("container"), std::vector<GLuint>());
 
   meshes_["point_light"] = Mesh();
   meshes_["point_light"].createMesh(lightVertices, indices, 48, 36);
 
-  meshes_["theiere"] = Mesh(getVerticesFromArrayAndNormals(gTheiereSommets, gTheiereNormales, 530),
+  meshes_["theiere"] = Mesh(DataFormat::getVerticesFromArrayAndNormals(gTheiereSommets, gTheiereNormales, 530),
       materials_.at("container"), std::vector<GLuint>(std::begin(gTheiereConnec), std::end(gTheiereConnec)));
 
-  meshes_["grass"] = Mesh(getVerticesFromArray(groundVertices, 6),
+  meshes_["grass"] = Mesh(DataFormat::getVerticesFromArray(groundVertices, 6),
       materials_.at("grass"), std::vector<GLuint>());
 }
 
@@ -81,8 +81,8 @@ void Scene::setupScene(){
   //theire model 
   for(unsigned int i = 0; i < 1; i++){
     models_.push_back(Model(&meshes_.at("theiere"), "mainShader", sm_.program("mainShader"),
-          glm::vec3(4.0f * cos(i), 100.0f, 0.0f * sin(i))));
-    models_.back().initPhysics(dynamicsWorld_, COLLISION_SHAPES::CUBE, 0.8f);
+          glm::vec3(4.0f * cos(i), 10.0f, 0.0f * sin(i))));
+    models_.back().initPhysics(dynamicsWorld_, COLLISION_SHAPES::CONVEX_HULL);
   }
 
 
@@ -136,6 +136,7 @@ void Scene::setupScene(){
 void Scene::drawScene(float deltaTime){
 
   deltaTime_ = deltaTime;
+  frameCounter_++;
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -163,6 +164,18 @@ void Scene::drawScene(float deltaTime){
   drawEntities();
   drawLights();
   drawTerrain();
+
+  // creates a new model (theier) to draw every 10000 frames.
+  if(frameCounter_ > 2000){
+    models_.push_back(Model(&meshes_.at("theiere"), "mainShader", sm_.program("mainShader"),
+          glm::vec3(4.0f, 30.0f, 0.0f)));
+    models_.back().initPhysics(dynamicsWorld_, COLLISION_SHAPES::CONVEX_HULL);
+    
+    // need to rebind shader to models (extremelly inneficient)
+    sm_.bindToModels(models_);
+
+    frameCounter_ = 0;
+  }
 }
 
 
@@ -219,31 +232,25 @@ void Scene::drawTerrain(){
 }
 
 void Scene::physics(){
-  dynamicsWorld_->stepSimulation(1.0f / 60.0f, 10);
-
+  dynamicsWorld_->stepSimulation(deltaTime_, 10);
 
   //print position of objects
   for (int j = dynamicsWorld_->getNumCollisionObjects() - 1; j >= 0; j--)
   {
-      btCollisionObject* obj = dynamicsWorld_->getCollisionObjectArray()[j];
-      btRigidBody* body = btRigidBody::upcast(obj);
-      btTransform trans;
-      if (body && body->getMotionState()) {
-          body->getMotionState()->getWorldTransform(trans);
-      }
-      else {
-          trans = obj->getWorldTransform();
-      }
-      // update model position and orientation
-      if(findModel(body) != nullptr){
-        findModel(body)->updatePosition(trans);
-      }
+    btCollisionObject* obj = dynamicsWorld_->getCollisionObjectArray()[j];
+    btRigidBody* body = btRigidBody::upcast(obj);
+    btTransform trans;
+    if (body && body->getMotionState()) {
+        body->getMotionState()->getWorldTransform(trans);
+    }
+    else {
+        trans = obj->getWorldTransform();
+    }
+    // update model position and orientation
+    if(findModel(body) != nullptr){
+      findModel(body)->updatePosition(trans);
+    }
   }
-
-  //for (int i = 0; i < models_.size(); i++){
-  //  models_[i].updatePosition();
-  //}
-  std::cout << "\n";
 }
 
 Model* Scene::findModel(btRigidBody* body){
@@ -252,15 +259,11 @@ Model* Scene::findModel(btRigidBody* body){
       if(body == models_[i].getRigidBody()){
         return &models_[i];
       }
-    } else{
-      std::cout << "nullptr" << std::endl;
     }
   }
-  std::cout << "did not work" << std::endl;
   return nullptr;
 }
 
-// TODO have deltaTime_ and bullet physics related
 // TODO have lights move with deltaTime
 //
 // TODO class that handles movement,
@@ -271,5 +274,9 @@ Model* Scene::findModel(btRigidBody* body){
 // TODO ImGUI initialization
 
 
+// TODO reorganize .h and .cpp files
+// TODO find a solution to not have include/includes.h
+
+// TODO reorganize utils.h and utils.cpp 
 
 

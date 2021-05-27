@@ -1,7 +1,5 @@
-#ifndef TEXTURE
-#define TEXTURE
-
-
+#ifndef __TEXTURE_H__
+#define __TEXTURE_H__ 
 
 #include <GL/glew.h>
 
@@ -29,4 +27,4 @@ class Texture{
     int loadTexture();
 };
 
-#endif //TEXTURE
+#endif // __TEXTURE_H__

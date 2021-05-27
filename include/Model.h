@@ -6,11 +6,11 @@
 
 #include "Mesh.h"
 
-#include <bullet/btBulletDynamicsCommon.h>
-
 enum COLLISION_SHAPES{
   CUBE,
-  SPHERE
+  SPHERE,
+  CONVEX_HULL,
+  TRIANGLE_MESH
 };
 
 class Model {
@@ -34,7 +34,7 @@ class Model {
 
     void setOrientation(glm::vec3 orientation) {orientation_ = orientation;}
 
-    //void accelerate(glm::vec3 acceleration);
+    void setConvexHullShape();
 
     void updatePosition(btTransform trans);
 

@@ -16,10 +16,6 @@ int failed(std::string message);
 
 float getDeltaTime(float &lastFrame);
 
-std::vector<Vertex> getVerticesFromArray(float* arr, unsigned int arraySize);
-
-std::vector<Vertex> getVerticesFromArrayAndNormals(float* vertices, float* normals, unsigned int arraySize);
-
 void printMSperFrame(double deltaTime);
 
 GLFWwindow* initializeWindow(const unsigned int windowHeight, const unsigned int windowWidth);

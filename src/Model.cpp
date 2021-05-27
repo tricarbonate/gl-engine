@@ -39,6 +39,7 @@ void Model::updatePosition(btTransform trans){
 
 }
 
+
 void Model::initPhysics(btDiscreteDynamicsWorld* dynamicsWorld, COLLISION_SHAPES shape, double data){
   if(shape == COLLISION_SHAPES::CUBE){
     collisionShape_ = new btBoxShape(btVector3(data, data, data));
@@ -46,13 +47,31 @@ void Model::initPhysics(btDiscreteDynamicsWorld* dynamicsWorld, COLLISION_SHAPES
   else if (shape == COLLISION_SHAPES::SPHERE){
     collisionShape_ = new btSphereShape(btScalar(data));
   }
+  else if (shape == COLLISION_SHAPES::CONVEX_HULL){
+    collisionShape_ = new btConvexHullShape(
+        mesh_->getVerticesCoordinates(), mesh_->getNumVertices(), 3 * sizeof(btScalar) );
+    collisionShape_->setMargin(0);
+  }
+  else if (shape == COLLISION_SHAPES::TRIANGLE_MESH){
+    
+	btTriangleIndexVertexArray* PhysicsMeshInterface =
+		new btTriangleIndexVertexArray(mesh_->getIndices().size() / 3,
+		(GLint*)&mesh_->getIndices()[0],
+		3 * sizeof(GLuint),
+
+		mesh_->getNumVertices(),
+		mesh_->getVerticesCoordinates(),
+		3 * sizeof(btScalar));
+
+     collisionShape_ = new btBvhTriangleMeshShape(PhysicsMeshInterface, false);
+  }
   
   btTransform startTransform;
   startTransform.setIdentity();
   btVector3 initialPosition = btVector3(position_.r, position_.g, position_.b);
   startTransform.setOrigin(initialPosition);
   
-  btScalar mass(1.f);
+  btScalar mass(100.f);
 
   bool isDynamic = (mass != 0.f);
   btVector3 localInertia(0, 0, 0);

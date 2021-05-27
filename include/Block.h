@@ -3,6 +3,9 @@
 
 #include "Model.h"
 
+/* Basic cube-shaped model
+//
+// */
 class Block : public Model {
   public:
     Block() = default; 
@@ -10,6 +13,7 @@ class Block : public Model {
 
   private:
     
+    double length_;
 };
 
 

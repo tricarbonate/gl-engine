@@ -31,6 +31,7 @@
 #include "EventHandler.h"
 #include "ShaderManager.h"
 #include "Mirror.h"
+#include "DataFormatter.h"
 
 // texture locations
 #define CONTAINER2_TEX_LOC "textures/container2.png" 
