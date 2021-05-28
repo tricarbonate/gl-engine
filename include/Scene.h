@@ -31,9 +31,9 @@ class Scene{
 
   private:
 
-    std::unordered_map<std::string, Texture> textures_;
-    std::unordered_map<std::string, Material> materials_;
-    std::unordered_map<std::string, Mesh> meshes_;
+    //std::unordered_map<std::string, Texture> textures_;
+    //std::unordered_map<std::string, Material> materials_;
+    //std::unordered_map<std::string, Mesh> meshes_;
 
     std::vector<Model> models_;
     std::vector<Mirror> mirrors_;

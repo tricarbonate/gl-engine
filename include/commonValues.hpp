@@ -1,4 +1,3 @@
-
 #ifndef COMMON_VALUES_HPP
 #define COMMON_VALUES_HPP
 

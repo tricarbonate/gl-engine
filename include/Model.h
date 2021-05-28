@@ -26,23 +26,19 @@ class Model {
     
     // getters
     Mesh* getMesh() { return mesh_; }
+    btRigidBody* getRigidBody() { return body_; }
     glm::vec3 getPosition() { return position_; }
     glm::vec3 getOrientation() { return orientation_; }
 
     // setters
     void setPosition(glm::vec3 position) { position_ = position; }
-
     void setOrientation(glm::vec3 orientation) {orientation_ = orientation;}
-
     void setConvexHullShape();
+    void setTransform(btTransform trans) { trans_ = trans; }
 
     void updatePosition(btTransform trans);
 
     void initPhysics(btDiscreteDynamicsWorld* dynamicsWorld, COLLISION_SHAPES shape, double data = 0.5);
-
-    void setTransform(btTransform trans) { trans_ = trans; }
-
-    btRigidBody* getRigidBody() { return body_; }
 
   private:
     // pointer to the mesh representing the model

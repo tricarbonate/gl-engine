@@ -28,6 +28,7 @@
 #include "Block.h"
 #include "Terrain.h"
 #include "State.h"
+#include "Assets.h"
 #include "EventHandler.h"
 #include "ShaderManager.h"
 #include "Mirror.h"

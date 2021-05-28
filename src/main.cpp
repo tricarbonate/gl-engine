@@ -27,7 +27,6 @@ int main(){
   scene.setupScene();
   
   EventHandler eventHandler(window, scene.getCamera());
-  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
   glfwSwapInterval(0);
   
 
@@ -69,7 +68,7 @@ int main(){
       printMSperFrame(DELTA_TIME);
       scene.drawScene(DELTA_TIME);
 
-            // render your GUI
+      // render your GUI
       ImGui::Begin("Demo window");
       ImGui::Button("Hello!");
       ImGui::End();

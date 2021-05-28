@@ -36,33 +36,35 @@ Scene::Scene():
 Scene::~Scene(){}
 
 void Scene::defineTextures(){
-  textures_["container"] = Texture(CONTAINER2_TEX_LOC);
-  textures_["container_specular"] = Texture(CONTAINER2_SPEC_LOC);
-  textures_["grass"] = Texture(GRASS_TEX_LOC, GL_RGB);
+  Assets::textures["container"] = Texture(CONTAINER2_TEX_LOC);
+  Assets::textures["container_specular"] = Texture(CONTAINER2_SPEC_LOC);
+  Assets::textures["grass"] = Texture(GRASS_TEX_LOC, GL_RGB);
 }
 
 void Scene::defineMaterials(){
-  materials_["container"] = {&textures_.at("container"),
-    &textures_.at("container_specular"), nullptr, nullptr, 32.0f};
-  materials_["grass"] = {&textures_.at("grass"),
-    &textures_.at("container_specular"), nullptr, nullptr, 32.0f};
+  Assets::materials["container"] = {&Assets::textures.at("container"),
+    &Assets::textures.at("container_specular"), nullptr, nullptr, 32.0f};
+  Assets::materials["grass"] = {&Assets::textures.at("grass"),
+    &Assets::textures.at("container_specular"), nullptr, nullptr, 32.0f};
 }
 
 void Scene::defineMeshes(){
-  meshes_["container"] = Mesh(DataFormat::getVerticesFromArray(vertices, 36), 
-      materials_.at("container"), std::vector<GLuint>());
+  Assets::meshes["container"] = Mesh(DataFormat::getVerticesFromArray(vertices, 36), 
+      Assets::materials.at("container"), std::vector<GLuint>());
 
-  meshes_["instancedContainer"] = Mesh(DataFormat::getVerticesFromArray(vertices, 36),
-      materials_.at("container"), std::vector<GLuint>());
+  Assets::meshes["instancedContainer"] = Mesh(DataFormat::getVerticesFromArray(vertices, 36),
+      Assets::materials.at("container"), std::vector<GLuint>());
 
-  meshes_["point_light"] = Mesh();
-  meshes_["point_light"].createMesh(lightVertices, indices, 48, 36);
+  Assets::meshes["point_light"] = Mesh();
+  Assets::meshes["point_light"].createMesh(lightVertices, indices, 48, 36);
 
-  meshes_["theiere"] = Mesh(DataFormat::getVerticesFromArrayAndNormals(gTheiereSommets, gTheiereNormales, 530),
-      materials_.at("container"), std::vector<GLuint>(std::begin(gTheiereConnec), std::end(gTheiereConnec)));
+  Assets::meshes["theiere"] = 
+    Mesh(DataFormat::getVerticesFromArrayAndNormals(gTheiereSommets, gTheiereNormales, 530),
+      Assets::materials.at("container"),
+      std::vector<GLuint>(std::begin(gTheiereConnec), std::end(gTheiereConnec)));
 
-  meshes_["grass"] = Mesh(DataFormat::getVerticesFromArray(groundVertices, 6),
-      materials_.at("grass"), std::vector<GLuint>());
+  Assets::meshes["grass"] = Mesh(DataFormat::getVerticesFromArray(groundVertices, 6),
+      Assets::materials.at("grass"), std::vector<GLuint>());
 }
 
 void Scene::setupScene(){
@@ -73,13 +75,13 @@ void Scene::setupScene(){
 
 
   for(unsigned int i = 0; i < 10; i ++){
-    models_.push_back(Model(&meshes_.at("container"), "mainShader", sm_.program("mainShader"),
+    models_.push_back(Model(&Assets::meshes.at("container"), "mainShader", sm_.program("mainShader"),
           glm::vec3(5 * cos(i), 2.0f, 5 * sin(i))));
     models_.back().initPhysics(dynamicsWorld_, COLLISION_SHAPES::CUBE);
   }
   
   //theire model 
-  models_.push_back(Model(&meshes_.at("theiere"), "mainShader", sm_.program("mainShader"),
+  models_.push_back(Model(&Assets::meshes.at("theiere"), "mainShader", sm_.program("mainShader"),
         glm::vec3(4.0f, 10.0f, 0.0f)));
   models_.back().initPhysics(dynamicsWorld_, COLLISION_SHAPES::CONVEX_HULL);
 
@@ -117,13 +119,13 @@ void Scene::setupScene(){
     Light(LightType::DIRECTIONAL, glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(),
         glm::vec3(-0.1f, -1.0f, 0.0f)),
     Light(LightType::POINT, glm::vec3(0.8f, 0.8f, 0.8f),
-        glm::vec3(0.0f, 2.0f, 0.0f), glm::vec3(), &meshes_.at("point_light")),
+        glm::vec3(0.0f, 2.0f, 0.0f), glm::vec3(), &Assets::meshes.at("point_light")),
     Light(LightType::POINT, glm::vec3(0.9f, 0.4f, 0.4f),
-        glm::vec3(-1.0f, 3.0f, 0.0f), glm::vec3(), &meshes_.at("point_light")),
+        glm::vec3(-1.0f, 3.0f, 0.0f), glm::vec3(), &Assets::meshes.at("point_light")),
     Light(LightType::POINT, glm::vec3(0.4f, 0.9f, 0.0f),
-        glm::vec3(0.0f, 6.0f, 0.0f), glm::vec3(), &meshes_.at("point_light")),
+        glm::vec3(0.0f, 6.0f, 0.0f), glm::vec3(), &Assets::meshes.at("point_light")),
     Light(LightType::POINT, glm::vec3(0.1f, 0.1f, 0.8f),
-        glm::vec3(0.0f, 4.0f, 0.0f), glm::vec3(), &meshes_.at("point_light"))
+        glm::vec3(0.0f, 4.0f, 0.0f), glm::vec3(), &Assets::meshes.at("point_light"))
   }; 
   
   sm_.bindToModels(models_);
@@ -164,7 +166,7 @@ void Scene::drawScene(float deltaTime){
 
   // creates a new model (theier) to draw every 10000 frames.
   if(frameCounter_ > 2000){
-    models_.push_back(Model(&meshes_.at("theiere"), "mainShader", sm_.program("mainShader"),
+    models_.push_back(Model(&Assets::meshes.at("theiere"), "mainShader", sm_.program("mainShader"),
           glm::vec3(4.0f, 30.0f, 0.0f)));
     models_.back().initPhysics(dynamicsWorld_, COLLISION_SHAPES::CONVEX_HULL);
     
@@ -265,6 +267,7 @@ Model* Scene::findModel(btRigidBody* body){
 // TODO better lighting system, (maybe Entity class?)
 //
 // TODO class that handles movement,
+// TODO syncing with bullet physics and entities positions
 // physics variables, communication with bullet physics in relation with deltaTime
 //
 //
