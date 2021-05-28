@@ -11,11 +11,6 @@
 /* 
  * This struct is used for Shader Programs initializations
  */
-struct ShaderSchema{
-  std::string name;
-  std::vector<std::pair<const char*, GLenum> > files;
-};
-
 
 /* This class contains all the shader programs available and links them to their
  * corresponding models.

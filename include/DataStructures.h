@@ -6,6 +6,9 @@
 #include <glm/vec3.hpp>
 #include <glm/vec2.hpp>
 
+#include <vector>
+#include <unordered_map>
+
 struct Vertex{
   glm::vec3 position;
   glm::vec3 normal;
@@ -22,5 +25,7 @@ struct Material{
   Texture* height;
   float shininess;
 };
+
+typedef std::pair<std::string, std::vector<std::pair<const char*, GLenum>>> ShaderSchema;
 
 #endif // __DATA_STRUCTURES_H__

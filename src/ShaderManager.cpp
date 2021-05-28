@@ -7,12 +7,12 @@ ShaderManager::ShaderManager(){
 ShaderManager::ShaderManager(std::vector<ShaderSchema> shaders)
 {
     for(size_t i = 0; i < shaders.size(); i++){
-        shaders_[shaders[i].name] = {
-            ShaderProgram(shaders[i].files),
+        shaders_[shaders[i].first] = {
+            ShaderProgram(shaders[i].second),
             std::vector<Model*>()
         }; 
 
-        shaders_[shaders[i].name].first.compileProgram();
+        shaders_[shaders[i].first].first.compileProgram();
     }
 }
 

@@ -4,75 +4,15 @@ Scene::Scene():
   models_(std::vector<Model>()),
   terrain_(Terrain())
 {
-  //initialize shader programs
-  std::vector<ShaderSchema> list = {
-    {
-      "mainShader",
-      {
-        {SHADERPROGRAM_VERT_LOC, GL_VERTEX_SHADER},
-        {SHADERPROGRAM_FRAG_LOC, GL_FRAGMENT_SHADER}
-      }
-    },
-    {
-      "lightingShader",
-      {
-        {LIGHTINGSHADER_VERT_LOC, GL_VERTEX_SHADER},
-        {LIGHTINGSHADER_FRAG_LOC, GL_FRAGMENT_SHADER}
-      }
-    },
-    {
-      "terrain_flatShader",
-      {
-        {TERRAIN_FLATSHADER_VERT_LOC, GL_VERTEX_SHADER},
-        {TERRAIN_FLATSHADER_FRAG_LOC, GL_FRAGMENT_SHADER}
-      }
-    }
-  };
-  sm_ = ShaderManager(list);
+
+  sm_ = ShaderManager(Assets::shaders);
 
   dynamicsWorld_->setGravity(btVector3(0, -3, 0));
 }
 
 Scene::~Scene(){}
 
-void Scene::defineTextures(){
-  Assets::textures["container"] = Texture(CONTAINER2_TEX_LOC);
-  Assets::textures["container_specular"] = Texture(CONTAINER2_SPEC_LOC);
-  Assets::textures["grass"] = Texture(GRASS_TEX_LOC, GL_RGB);
-}
-
-void Scene::defineMaterials(){
-  Assets::materials["container"] = {&Assets::textures.at("container"),
-    &Assets::textures.at("container_specular"), nullptr, nullptr, 32.0f};
-  Assets::materials["grass"] = {&Assets::textures.at("grass"),
-    &Assets::textures.at("container_specular"), nullptr, nullptr, 32.0f};
-}
-
-void Scene::defineMeshes(){
-  Assets::meshes["container"] = Mesh(DataFormat::getVerticesFromArray(vertices, 36), 
-      Assets::materials.at("container"), std::vector<GLuint>());
-
-  Assets::meshes["instancedContainer"] = Mesh(DataFormat::getVerticesFromArray(vertices, 36),
-      Assets::materials.at("container"), std::vector<GLuint>());
-
-  Assets::meshes["point_light"] = Mesh();
-  Assets::meshes["point_light"].createMesh(lightVertices, indices, 48, 36);
-
-  Assets::meshes["theiere"] = 
-    Mesh(DataFormat::getVerticesFromArrayAndNormals(gTheiereSommets, gTheiereNormales, 530),
-      Assets::materials.at("container"),
-      std::vector<GLuint>(std::begin(gTheiereConnec), std::end(gTheiereConnec)));
-
-  Assets::meshes["grass"] = Mesh(DataFormat::getVerticesFromArray(groundVertices, 6),
-      Assets::materials.at("grass"), std::vector<GLuint>());
-}
-
 void Scene::setupScene(){
-
-  defineTextures();
-  defineMaterials();
-  defineMeshes();
-
 
   for(unsigned int i = 0; i < 10; i ++){
     models_.push_back(Model(&Assets::meshes.at("container"), "mainShader", sm_.program("mainShader"),
@@ -223,11 +163,11 @@ void Scene::drawEntities(){
 }
 
 void Scene::drawTerrain(){
-  sm_.program("terrain_flatShader")->useProgram();  
-  sm_.program("terrain_flatShader")->setUniform("viewPos", camera_.getPos());
-  sm_.program("terrain_flatShader")->setUniformLights(lights_);
+  sm_.program("terrain_flatshader")->useProgram();  
+  sm_.program("terrain_flatshader")->setUniform("viewPos", camera_.getPos());
+  sm_.program("terrain_flatshader")->setUniformLights(lights_);
 
-  terrain_.draw(modelMatrix_, viewMatrix_, projectionMatrix_, *sm_.program("terrain_flatShader"));
+  terrain_.draw(modelMatrix_, viewMatrix_, projectionMatrix_, *sm_.program("terrain_flatshader"));
 }
 
 void Scene::physics(){
@@ -300,3 +240,5 @@ Model* Scene::findModel(btRigidBody* body){
 // TODO Antialiasing (learnopengl.com)
 // TODO Normal Mapping
 // TODO Bloom effect for lights
+//
+// TODO Faire une map sur papier des classes Models, Mesh etc...

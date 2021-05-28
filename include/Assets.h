@@ -3,27 +3,28 @@
 
 #include "Mesh.h"
 #include "Texture.h"
-#include "ShaderProgram.h"
 #include "Singleton.h"
+#include "DataStructures.h"
 
 #include <unordered_map>
 #include <string>
 
-#define N_TEX_MAX 100
-#define N_MAT_MAX 100
-#define N_MESH_MAX 100 
-
 /* All publicly available game assets
  * like textures, materials, meshes and shader programs
- * More can then be created AT runtime
+ * can be created using Assets class
+ *
+ * More assets can added be created AT runtime
  *
  */
 class Assets : public Singleton<Assets>
 {
   public:
-    static inline std::unordered_map<std::string, Texture> textures;
-    static inline std::unordered_map<std::string, Material> materials;
-    static inline std::unordered_map<std::string, Mesh> meshes;
+    static std::unordered_map<std::string, Texture> textures;
+    static std::unordered_map<std::string, Material> materials;
+    static std::unordered_map<std::string, Mesh> meshes;
+
+    //Assets only create a ShaderSchema list that the shader manager uses
+    static std::vector<ShaderSchema> shaders;
 
   private:
     Assets();

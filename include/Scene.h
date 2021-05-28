@@ -49,10 +49,6 @@ class Scene{
     Camera camera_;
     glm::mat4 modelMatrix_, viewMatrix_, projectionMatrix_, mvp_;
 
-    void defineTextures();
-    void defineMaterials();
-    void defineMeshes();
-
     /* private methods for setup and drawing: */
 
     // draw all the lights in 'lights_'
