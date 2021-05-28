@@ -50,7 +50,6 @@ void Model::initPhysics(btDiscreteDynamicsWorld* dynamicsWorld, COLLISION_SHAPES
   else if (shape == COLLISION_SHAPES::CONVEX_HULL){
     collisionShape_ = new btConvexHullShape(
         mesh_->getVerticesCoordinates(), mesh_->getNumVertices(), 3 * sizeof(btScalar) );
-    collisionShape_->setMargin(0);
   }
   else if (shape == COLLISION_SHAPES::TRIANGLE_MESH){
     

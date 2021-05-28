@@ -31,14 +31,15 @@ class Scene{
 
   private:
 
-    Terrain terrain_;
     std::unordered_map<std::string, Texture> textures_;
     std::unordered_map<std::string, Material> materials_;
     std::unordered_map<std::string, Mesh> meshes_;
+
     std::vector<Model> models_;
     std::vector<Mirror> mirrors_;
     std::vector<Light> lights_;
 
+    Terrain terrain_;
     ShaderManager sm_; 
 
     double deltaTime_;
@@ -77,7 +78,6 @@ class Scene{
 
     btDiscreteDynamicsWorld* dynamicsWorld_ = new btDiscreteDynamicsWorld(dispatcher_,
 	overlappingPairCache_, solver_, collisionConfiguration_);
-
 
     btAlignedObjectArray<btCollisionShape*> collisionShapes_;
 

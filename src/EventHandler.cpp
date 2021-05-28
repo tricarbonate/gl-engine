@@ -13,7 +13,9 @@ EventHandler::~EventHandler(){
 
 void EventHandler::handleEvents(float deltaTime){
     handleKeys(deltaTime);
-    handleMouse();
+    if(State::cursorDisabled_){
+        handleMouse();
+    }
 }
 
 
@@ -49,6 +51,16 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
     if(key == GLFW_KEY_F && action == GLFW_PRESS){
         State::fullScreenMode_ = !State::fullScreenMode_;
+    }
+
+    if(key == GLFW_KEY_C && action == GLFW_PRESS){
+        if(State::cursorDisabled_){
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        }
+        else {
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        }
+        State::cursorDisabled_ = !State::cursorDisabled_;
     }
 }
 

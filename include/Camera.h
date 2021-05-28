@@ -1,5 +1,5 @@
-#ifndef CAMERA
-#define CAMERA
+#ifndef __CAMERA_H__
+#define __CAMERA_H__
 
 
 #include <glm/mat4x4.hpp>
@@ -52,4 +52,4 @@ class Camera{
 
 };
 
-#endif // CAMERA
+#endif // __CAMERA_H__ 

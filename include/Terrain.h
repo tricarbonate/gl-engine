@@ -14,7 +14,7 @@
 const int zMapChunk = 3;
 const int xMapChunk = 3;
 
-class Terrain{
+class Terrain {
   public:
 
     Terrain();

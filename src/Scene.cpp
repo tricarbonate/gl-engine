@@ -1,8 +1,8 @@
 #include "../include/Scene.h"
 
 Scene::Scene():
-  terrain_(Terrain()),
-  models_(std::vector<Model>())
+  models_(std::vector<Model>()),
+  terrain_(Terrain())
 {
   //initialize shader programs
   std::vector<ShaderSchema> list = {
@@ -79,11 +79,9 @@ void Scene::setupScene(){
   }
   
   //theire model 
-  for(unsigned int i = 0; i < 1; i++){
-    models_.push_back(Model(&meshes_.at("theiere"), "mainShader", sm_.program("mainShader"),
-          glm::vec3(4.0f * cos(i), 10.0f, 0.0f * sin(i))));
-    models_.back().initPhysics(dynamicsWorld_, COLLISION_SHAPES::CONVEX_HULL);
-  }
+  models_.push_back(Model(&meshes_.at("theiere"), "mainShader", sm_.program("mainShader"),
+        glm::vec3(4.0f, 10.0f, 0.0f)));
+  models_.back().initPhysics(dynamicsWorld_, COLLISION_SHAPES::CONVEX_HULL);
 
 
   /* Bullet Physics */
@@ -112,7 +110,6 @@ void Scene::setupScene(){
     //add the body to the dynamics world
     dynamicsWorld_->addRigidBody(body);
   }
-
   /* End of Bullet Physics init */
 
   /* Initialization of lights */
@@ -270,7 +267,6 @@ Model* Scene::findModel(btRigidBody* body){
 // TODO class that handles movement,
 // physics variables, communication with bullet physics in relation with deltaTime
 //
-// TODO btHeightfield
 //
 // TODO Find a real idea
 //
@@ -286,4 +282,18 @@ Model* Scene::findModel(btRigidBody* body){
 // TODO Mouse picking (with bullet physics?)
 // TODO Controller inputs?
 
-
+// TODO More usable Terrain class
+// TODO Create a mesh from Chunk?
+// TODO Learn about Chunk creation...
+// TODO btHeightfield
+//
+// TODO Change makefile to compile .h .cpp recursively (folders)
+//
+//
+// TODO GLSL Cleaner uniform data structures (in struct... out struct)
+// TODO Uniform Buffer Objects
+// TODO Andvanced GLSL (learnopengl.com)
+// TODO Geometry and tesselation shaders
+// TODO Antialiasing (learnopengl.com)
+// TODO Normal Mapping
+// TODO Bloom effect for lights
