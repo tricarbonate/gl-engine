@@ -1,10 +1,16 @@
 #define BT_USE_DOUBLE_PRECISION
 
 #include "../include/Scene.h"
+#include "../include/includes.h"
 
-#include "../include/imgui.h"
-#include "../include/imgui_impl_glfw.h"
-#include "../include/imgui_impl_opengl3.h"
+#include "../include/commonValues.hpp"
+#include "../include/DataFormat.h"
+#include "../include/EventHandler.h"
+#include "../include/utils.hpp"
+
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
 
 const unsigned int WINDOW_HEIGHT = 1200;
 const unsigned int WINDOW_WIDTH = 1600;
@@ -31,6 +37,7 @@ void defineAssets(){
 
   Assets::meshes["point_light"] = Mesh();
   Assets::meshes["point_light"].createMesh(lightVertices, indices, 48, 36);
+
 
   Assets::meshes["theiere"] = 
     Mesh(DataFormat::getVerticesFromArrayAndNormals(gTheiereSommets, gTheiereNormales, 530),

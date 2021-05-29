@@ -3,13 +3,12 @@
 Light::Light(){}
 
 Light::Light(LightType type, glm::vec3 color, glm::vec3 position,
-    glm::vec3 direction, Mesh* mesh):
+    glm::vec3 direction, Mesh* mesh, ShaderProgram* shaderProgram):
+  Model(mesh, "lightingShader", shaderProgram, position),
   lightType_(type),
-  position_(position),
   diffuseColor_(color),
   specularColor_(color),
-  direction_(direction),
-  mesh_(mesh)
+  direction_(direction)
 {
   ambientColor_ = glm::vec3(0.2f, 0.2f, 0.2f);
 }
@@ -17,9 +16,8 @@ Light::Light(LightType type, glm::vec3 color, glm::vec3 position,
 Light::~Light(){
 }
 
-
-void Light::setPosition(float x, float y, float z){
-  position_ = glm::vec3(x, y, z);
+void Light::draw(){
+  this->mesh_->renderMesh();
 }
 
 void Light::setDirection(float x, float y, float z){

@@ -1,38 +1,9 @@
 /*
- * Contains all necessary include for main
+ * Contains defined values for file paths
  * */
 
 #ifndef __INCLUDES_H__
 #define __INCLUDES_H__
-
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-
-#include <glm/mat4x4.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
-#include <iostream>
-#include <string>
-#include <cstring> //for strlen();
-#include <map>
-#include <fstream>
-
-#include "Light.h"
-#include "Texture.h"
-#include "Mesh.h"
-#include "Camera.h"
-#include "utils.hpp"
-#include "commonValues.hpp"
-//#include "Scene.h"
-#include "Model.h"
-#include "Block.h"
-#include "Terrain.h"
-#include "State.h"
-#include "Assets.h"
-#include "EventHandler.h"
-#include "ShaderManager.h"
-#include "Mirror.h"
-#include "DataFormat.h"
 
 // texture locations
 #define CONTAINER2_TEX_LOC "textures/container2.png" 

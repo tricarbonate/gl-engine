@@ -6,8 +6,8 @@ Mesh::Mesh()
 Mesh::Mesh(std::vector<Vertex> vertices, Material material,
         std::vector<GLuint> indices):
   vertices_(vertices),
-  indices_(indices),
-  material_(material)
+  material_(material),
+  indices_(indices)
 {
   createMesh();
 }
@@ -105,18 +105,7 @@ btScalar* Mesh::getVerticesCoordinates(){
   return &coordinates[0];
 }
 
-void Mesh::renderMesh(ShaderProgram& shader, bool indices){
-  /* glActiveTexture(GL_TEXTURE0); */
-  /* shader.setUniform("material.diffuse", (unsigned int)0); */
-  /* material_.diffuse->bind(); */
-
-  /* glActiveTexture(GL_TEXTURE0 + 1); */
-  /* shader.setUniform("material.specular", (unsigned int)1); */
-  /* material_.specular->bind(); */
-
-  /* shader.setUniform("material.shininess", material_.shininess); */
-  
-  /* glActiveTexture(GL_TEXTURE0); */
+void Mesh::renderMesh(){
 
   glBindVertexArray(vao_);
   if(indices_.size() != 0){
@@ -140,12 +129,5 @@ void Mesh::renderMesh(ShaderProgram& shader, bool indices){
   glBindVertexArray(0);
 }
 
-void Mesh::renderMesh(){
-  glBindVertexArray(vao_);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesVbo_);
-  glDrawElements(GL_TRIANGLES, indexCount_, GL_UNSIGNED_INT, 0);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-  glBindVertexArray(0);
-}
 
 

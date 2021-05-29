@@ -59,13 +59,13 @@ void Scene::setupScene(){
     Light(LightType::DIRECTIONAL, glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(),
         glm::vec3(-0.1f, -1.0f, 0.0f)),
     Light(LightType::POINT, glm::vec3(0.8f, 0.8f, 0.8f),
-        glm::vec3(0.0f, 2.0f, 0.0f), glm::vec3(), &Assets::meshes.at("point_light")),
+        glm::vec3(0.0f, 2.0f, 0.0f), glm::vec3(), &Assets::meshes.at("container"), sm_.program("lightingShader")),
     Light(LightType::POINT, glm::vec3(0.9f, 0.4f, 0.4f),
-        glm::vec3(-1.0f, 3.0f, 0.0f), glm::vec3(), &Assets::meshes.at("point_light")),
+        glm::vec3(-1.0f, 3.0f, 0.0f), glm::vec3(), &Assets::meshes.at("container"), sm_.program("lightingShader")),
     Light(LightType::POINT, glm::vec3(0.4f, 0.9f, 0.0f),
-        glm::vec3(0.0f, 6.0f, 0.0f), glm::vec3(), &Assets::meshes.at("point_light")),
+        glm::vec3(0.0f, 6.0f, 0.0f), glm::vec3(), &Assets::meshes.at("container"), sm_.program("lightingShader")),
     Light(LightType::POINT, glm::vec3(0.1f, 0.1f, 0.8f),
-        glm::vec3(0.0f, 4.0f, 0.0f), glm::vec3(), &Assets::meshes.at("point_light"))
+        glm::vec3(0.0f, 4.0f, 0.0f), glm::vec3(), &Assets::meshes.at("container"), sm_.program("lightingShader"))
   }; 
   
   sm_.bindToModels(models_);
@@ -97,7 +97,7 @@ void Scene::drawScene(float deltaTime){
   test_ += 0.01;
   for(size_t i = 0; i < lights_.size(); i++){
     glm::vec3 curr = lights_[i].getPosition();
-    lights_[i].setPosition(curr.x + cos(test_ + (float)(i + 1)) / 20, curr.y, curr.z + sin(test_ + (float)(i+1)) / 20);
+    lights_[i].setPosition(glm::vec3(curr.x + cos(test_ + (float)(i + 1)) / 20, curr.y, curr.z + sin(test_ + (float)(i+1)) / 20));
   }
 
   drawEntities();
@@ -205,11 +205,11 @@ Model* Scene::findModel(btRigidBody* body){
 
 // TODO have lights move with deltaTime
 // TODO better lighting system, (maybe Entity class?)
+// TODO include spot light handling in shaders...
 //
 // TODO class that handles movement,
 // TODO syncing with bullet physics and entities positions
 // physics variables, communication with bullet physics in relation with deltaTime
-//
 //
 // TODO Find a real idea
 //
@@ -217,10 +217,8 @@ Model* Scene::findModel(btRigidBody* body){
 // TODO More imgui functionalities
 
 // TODO Scene class should only contain entities initialization and drawing.
-// :
-
-// TODO reorganize .h and .cpp files
-// TODO find a solution to not have include/includes.h
+//
+// TODO Find a serialization library
 
 // TODO Mouse picking (with bullet physics?)
 // TODO Controller inputs?

@@ -2,8 +2,7 @@
 EXEC= app
 
 GLFLAGS= -lglfw -lGL -lm -lXrandr -lXi -lX11 -lXxf86vm -lpthread -lGLEW 
-BULLET_PHYSICS_FLAGS= -lBulletSoftBody -lBulletDynamics -lBulletCollision -lLinearMath -I/usr/include/bullet/ -I/.../bullet-2.82-r2704/Demos/OpenGL/
-
+BULLET_PHYSICS_FLAGS= -lBulletSoftBody -lBulletDynamics -lBulletCollision -lLinearMath -I/usr/include/bullet/ -I/.../bullet-2.82-r2704/Demos/OpenGL/ -I/~/Documents/tricarbonate/gl-engine/src/imgui
 
 # Build, bin and install directories ()
 BUILD_DIR_ROOT= build
@@ -14,11 +13,15 @@ INSTALL_DIR := ./install
 
 # Sources
 SRC_DIR = src
+IMGUI_DIR = libs/imgui
 SRCS := $(sort $(shell find  $(SRC_DIR) -name '*.cpp'))
 
 # Includes
 INCLUDE_DIR = include
-INCLUDES := -I$(INCLUDES_DIR)
+INCLUDES := -I$(INCLUDES_DIR) -I$(SRC_DIR)/imgui
+
+LIBS_DIR = libs
+LIBS := -I$(LIBS_DIR)
 
 # C preprocessor settings
 CPPFLAGS := -DGLEW_STATIC -MMD -MP $(INCLUDES)
@@ -29,9 +32,9 @@ CXXFLAGS = -std=c++17
 WARNINGS = -Wall -Wpedantic -Wextra #-Wconversion
 
 # Linker flags
-LDLFLAGS=
+LDFLAGS= -I/src/imgui -I/libs/stb_image
 
-# Libraries to ling
+# Libraries to link
 LDLLIBS=
 
 # Target OS detection
@@ -44,7 +47,7 @@ else
 	else ifeq ($(UNAME),Linux)
 		OS = linux
 	else
-    	$(error OS not supported by this Makefile)
+		$(error OS not supported by this Makefile)
 	endif
 endif
 
@@ -143,13 +146,13 @@ all: $(BIN_DIR)/$(EXEC)
 $(BIN_DIR)/$(EXEC): $(OBJS)
 	@echo "Building executable: $@"
 	@mkdir -p $(@D)
-	@$(CXX) $(LDFLAGS) $^ $(LDLIBS) -o $@ $(GLFLAGS) $(BULLET_PHYSICS_FLAGS)
+	@$(CXX) $(LDFLAGS) $^ $(LDLIBS) -o $@ $(GLFLAGS) $(BULLET_PHYSICS_FLAGS) $(LIBS)
 
 # Compile C++ source files
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@echo "Compiling: $<"
 	@mkdir -p $(@D)
-	@$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(WARNINGS) -c $< -o $@ $(GLFLAGS) $(BULLET_PHYSICS_FLAGS)
+	@$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(WARNINGS) -c $< -o $@ $(GLFLAGS) $(BULLET_PHYSICS_FLAGS) $(LIBS)
 
 # Include automatically-generated dependencies
 -include $(DEPS)
@@ -198,7 +201,7 @@ doc:
 	@echo "Generating documentation"
 	@doxygen doc/Doxyfile
 
-  
+	
 # Print help information
 .PHONY: help
 help:

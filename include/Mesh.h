@@ -2,7 +2,6 @@
 #define MESH_H
 
 #include "Texture.h"
-#include "ShaderProgram.h"
 #include "DataStructures.h"
 
 #include <iostream>
@@ -10,8 +9,6 @@
 #include <GLFW/glfw3.h>
 
 #include <bullet/btBulletDynamicsCommon.h>
-
-
 
 class Mesh 
 {
@@ -28,7 +25,6 @@ class Mesh
     void createInstanced(std::vector<glm::vec3> offsets);
 
     void renderMesh();
-    void renderMesh(ShaderProgram& shader, bool indices);
 
     // getters
     Material& getMaterial() { return material_; }
@@ -43,7 +39,6 @@ class Mesh
   protected:
 
     // Mesh data
-    Material material_;
     std::vector<glm::vec3> offsets_;
 
     GLuint indexCount_, vertexCount_;
@@ -51,6 +46,7 @@ class Mesh
 
     std::vector<Vertex> vertices_;
     std::vector<GLuint> indices_;
+    Material material_;
 };
 
 #endif // MESH

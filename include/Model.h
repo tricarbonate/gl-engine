@@ -1,10 +1,16 @@
-#ifndef MODEL_H
-#define MODEL_H
+#ifndef __MODEL_H__
+#define __MODEL_H__
 
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Mesh.h"
+
+// Forward declaration of ShaderProgram to avoid recursive include of files
+// Model class only need a reference to a ShaderProgram (in this file)
+class ShaderProgram;
+
+#include <btBulletDynamicsCommon.h>
 
 enum COLLISION_SHAPES{
   CUBE,
@@ -27,7 +33,7 @@ class Model {
     // getters
     Mesh* getMesh() { return mesh_; }
     btRigidBody* getRigidBody() { return body_; }
-    glm::vec3 getPosition() { return position_; }
+    glm::vec3 getPosition() const { return position_; }
     glm::vec3 getOrientation() { return orientation_; }
 
     // setters
@@ -35,12 +41,13 @@ class Model {
     void setOrientation(glm::vec3 orientation) {orientation_ = orientation;}
     void setConvexHullShape();
     void setTransform(btTransform trans) { trans_ = trans; }
+    void setMesh(Mesh* mesh) { mesh_ = mesh; }
 
     void updatePosition(btTransform trans);
 
     void initPhysics(btDiscreteDynamicsWorld* dynamicsWorld, COLLISION_SHAPES shape, double data = 0.5);
 
-  private:
+  protected:
     // pointer to the mesh representing the model
     Mesh* mesh_;
     

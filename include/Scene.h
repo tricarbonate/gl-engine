@@ -1,10 +1,16 @@
 #ifndef SCENE_H
 #define SCENE_H
 
-#include "includes.h"
+//#include "includes.h"
+#include "Model.h"
+#include "Light.h"
+#include "ShaderManager.h"
+#include "Mirror.h"
+#include "Camera.h"
+#include "Terrain.h"
+#include "Assets.h"
 
 #include <bullet/btBulletDynamicsCommon.h>
-//#include <bullet/btHeightfieldTerrainShape.h>
 
 #include <vector>
 #include <map>

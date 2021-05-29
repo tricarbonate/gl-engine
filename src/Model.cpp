@@ -1,5 +1,7 @@
 #include "../include/Model.h"
 
+#include "../include/ShaderProgram.h"
+
 Model::Model():
   mesh_(nullptr),
   position_(glm::vec3(0.0f, 0.0f, 0.0f)),
@@ -23,7 +25,7 @@ void Model::draw(){
   shaderProgram_.second->setUniform("material.shininess", mesh_->getMaterial().shininess);
   glActiveTexture(GL_TEXTURE0);
 
-  mesh_->renderMesh(*shaderProgram_.second, false);  
+  mesh_->renderMesh();  
 }
 
 void Model::updatePosition(btTransform trans){
