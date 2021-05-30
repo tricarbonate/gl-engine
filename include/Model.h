@@ -58,6 +58,7 @@ class Model {
     glm::vec<3, double, glm::defaultp> position_;
     glm::vec<3, double, glm::defaultp> orientation_; // object orientation on its axis
     glm::vec<3, double, glm::defaultp> currentSpeed_;
+    glm::vec<3, double, glm::defaultp> acceleration_;
 
     btCollisionShape* collisionShape_;
     btRigidBody* body_;

@@ -1,6 +1,6 @@
 #version 330 core
 
-#define NR_POINT_LIGHTS 4
+#define NR_POINT_LIGHTS 10 
 
 in vec3 fragNorm;
 in vec3 fragPos;
@@ -34,12 +34,13 @@ struct PointLight {
   vec3 specular;
 };
 
-uniform PointLight pointLights[NR_POINT_LIGHTS];
-uniform Material material;
 
 uniform int pointLightCount;
 uniform DirLight dirLight;
 uniform vec3 viewPos;
+
+uniform PointLight pointLights[NR_POINT_LIGHTS];
+uniform Material material;
 
 vec3 calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 vec3 calcDirLight(DirLight light, vec3 normal, vec3 viewDir);
@@ -52,7 +53,7 @@ void main(){
   result = calcDirLight(dirLight, norm, viewDir);
 
   if(pointLightCount != 0 ){
-    for(int j = 0; j < NR_POINT_LIGHTS; j++){
+    for(int j = 0; j < pointLightCount; j++){
       result += calcPointLight(pointLights[j], norm, fragPos, viewDir);
     }
   }

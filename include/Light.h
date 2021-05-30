@@ -27,18 +27,22 @@ class Light : public Model {
     void setDiffuseColor(float r, float g, float b);
     void setSpecularColor(float r, float g, float b);
     void setDirection(float x, float y, float z);
+    void setIntensity(double intensity);
 
     LightType getType() const { return lightType_; }
     glm::vec3 getAmbientColor() const { return ambientColor_; }
     glm::vec3 getDiffuseColor() const { return diffuseColor_; }
     glm::vec3 getSpecularColor() const { return specularColor_; }
     glm::vec3 getDirection() const { return direction_; }
+    double getIntensity() const { return intensity_; }
     
-  private:
+  protected:
     LightType lightType_;
 
     glm::vec3 ambientColor_, diffuseColor_, specularColor_;
     glm::vec3 direction_;
+
+    double intensity_;
 };
 
 #endif //LIGHT

@@ -9,6 +9,7 @@ Model::Model():
   currentSpeed_(glm::vec3(0.0f, 0.0f, 0.0f))
 {}
 
+
 Model::Model(Mesh* mesh, const char* shaderName, ShaderProgram* shaderProgram, glm::vec3 position):
   mesh_(mesh),
   shaderProgram_({shaderName, shaderProgram}),

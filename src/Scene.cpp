@@ -4,10 +4,7 @@ Scene::Scene():
   models_(std::vector<Model>()),
   terrain_(Terrain())
 {
-
   sm_ = ShaderManager(Assets::shaders);
-
-  dynamicsWorld_->setGravity(btVector3(0, -3, 0));
 }
 
 Scene::~Scene(){}
@@ -17,56 +14,33 @@ void Scene::setupScene(){
   for(unsigned int i = 0; i < 10; i ++){
     models_.push_back(Model(&Assets::meshes.at("container"), "mainShader", sm_.program("mainShader"),
           glm::vec3(5 * cos(i), 2.0f, 5 * sin(i))));
-    models_.back().initPhysics(dynamicsWorld_, COLLISION_SHAPES::CUBE);
+    physicsEngine_.addObject(&models_.back(), COLLISION_SHAPES::CUBE);
   }
   
   //theire model 
   models_.push_back(Model(&Assets::meshes.at("theiere"), "mainShader", sm_.program("mainShader"),
         glm::vec3(4.0f, 10.0f, 0.0f)));
-  models_.back().initPhysics(dynamicsWorld_, COLLISION_SHAPES::CONVEX_HULL);
+  physicsEngine_.addObject(&models_.back(), COLLISION_SHAPES::CONVEX_HULL);
 
-
-  /* Bullet Physics */
-
-  { // terrain
-    btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(50.0f), btScalar(1.0f), btScalar(50.0f)));
-
-    collisionShapes_.push_back(groundShape);
-
-    btTransform groundTransform;
-    groundTransform.setIdentity();
-    groundTransform.setOrigin(btVector3(0, terrain_.getBaseHeight() - 1.0f, 0));
-
-    btScalar mass(0);
-    //rigidbody is dynamic if and only if mass is non zero, otherwise static
-    bool isDynamic = (mass != 0.f);
-
-    btVector3 localInertia(0, 0, 0);
-    if (isDynamic)
-        groundShape->calculateLocalInertia(mass, localInertia);
-
-    btDefaultMotionState* myMotionState = new btDefaultMotionState(groundTransform);
-    btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, groundShape, localInertia);
-    btRigidBody* body = new btRigidBody(rbInfo);
-
-    //add the body to the dynamics world
-    dynamicsWorld_->addRigidBody(body);
-  }
-  /* End of Bullet Physics init */
+  physicsEngine_.addTerrain(&terrain_);
 
   /* Initialization of lights */
   lights_ = {
-    Light(LightType::DIRECTIONAL, glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(),
+    DirectionalLight(glm::vec3(0.2f, 0.2f, 0.2f),
         glm::vec3(-0.1f, -1.0f, 0.0f)),
-    Light(LightType::POINT, glm::vec3(0.8f, 0.8f, 0.8f),
+    PointLight(glm::vec3(0.8f, 0.8f, 0.8f),
         glm::vec3(0.0f, 2.0f, 0.0f), glm::vec3(), &Assets::meshes.at("container"), sm_.program("lightingShader")),
-    Light(LightType::POINT, glm::vec3(0.9f, 0.4f, 0.4f),
+    PointLight(glm::vec3(0.9f, 0.4f, 0.4f),
         glm::vec3(-1.0f, 3.0f, 0.0f), glm::vec3(), &Assets::meshes.at("container"), sm_.program("lightingShader")),
-    Light(LightType::POINT, glm::vec3(0.4f, 0.9f, 0.0f),
+    PointLight(glm::vec3(0.4f, 0.9f, 0.0f),
         glm::vec3(0.0f, 6.0f, 0.0f), glm::vec3(), &Assets::meshes.at("container"), sm_.program("lightingShader")),
-    Light(LightType::POINT, glm::vec3(0.1f, 0.1f, 0.8f),
+    PointLight(glm::vec3(0.1f, 0.1f, 0.8f),
         glm::vec3(0.0f, 4.0f, 0.0f), glm::vec3(), &Assets::meshes.at("container"), sm_.program("lightingShader"))
   }; 
+
+  for(int i = 1; i < lights_.size(); i++){
+    physicsEngine_.addObject(&lights_[i], COLLISION_SHAPES::CUBE, 0.05);
+  }
   
   sm_.bindToModels(models_);
 }
@@ -79,7 +53,12 @@ void Scene::drawScene(float deltaTime){
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+  //stepSimulation();
+  physicsEngine_.stepSimulation(deltaTime_);
+
   physics();   
+  //physicsEngine_.updateWorldPhysics(deltaTime_);
+  //std::cout << "drawing" << std::endl;
 
   // definition of matrices:
   if(State::perspective_){
@@ -94,22 +73,23 @@ void Scene::drawScene(float deltaTime){
   modelMatrix_ = glm::mat4(1.0f);
   mvp_ = projectionMatrix_ * viewMatrix_ * modelMatrix_;
 
-  test_ += 0.01;
-  for(size_t i = 0; i < lights_.size(); i++){
-    glm::vec3 curr = lights_[i].getPosition();
-    lights_[i].setPosition(glm::vec3(curr.x + cos(test_ + (float)(i + 1)) / 20, curr.y, curr.z + sin(test_ + (float)(i+1)) / 20));
-  }
-
   drawEntities();
   drawLights();
   drawTerrain();
 
   // creates a new model (theier) to draw every 10000 frames.
-  if(frameCounter_ > 2000){
+  // and a new light
+  if(frameCounter_ > 1000){
     models_.push_back(Model(&Assets::meshes.at("theiere"), "mainShader", sm_.program("mainShader"),
           glm::vec3(4.0f, 30.0f, 0.0f)));
-    models_.back().initPhysics(dynamicsWorld_, COLLISION_SHAPES::CONVEX_HULL);
+    physicsEngine_.addObject(&models_.back(), COLLISION_SHAPES::CONVEX_HULL, 0.05);
     
+    lights_.push_back(Light(LightType::POINT, glm::vec3(0.1f, 0.1f, 0.8f),
+        glm::vec3(2.0f, 3.0f, 0.0f), glm::vec3(), &Assets::meshes.at("container"),
+        sm_.program("lightingShader")));
+    physicsEngine_.addObject(&lights_.back(), COLLISION_SHAPES::CUBE, 0.05);
+
+
     // need to rebind shader to models (extremelly inneficient)
     sm_.bindToModels(models_);
 
@@ -171,12 +151,12 @@ void Scene::drawTerrain(){
 }
 
 void Scene::physics(){
-  dynamicsWorld_->stepSimulation(deltaTime_, 10);
+  //physicsEngine_.getDynamicsWorld()->stepSimulation(deltaTime_, 10);
 
   //print position of objects
-  for (int j = dynamicsWorld_->getNumCollisionObjects() - 1; j >= 0; j--)
+  for (int j = physicsEngine_.getDynamicsWorld()->getNumCollisionObjects() - 1; j >= 0; j--)
   {
-    btCollisionObject* obj = dynamicsWorld_->getCollisionObjectArray()[j];
+    btCollisionObject* obj = physicsEngine_.getDynamicsWorld()->getCollisionObjectArray()[j];
     btRigidBody* body = btRigidBody::upcast(obj);
     btTransform trans;
     if (body && body->getMotionState()) {
@@ -192,11 +172,22 @@ void Scene::physics(){
   }
 }
 
+void Scene::stepSimulation(){
+  physicsEngine_.getDynamicsWorld()->stepSimulation(deltaTime_, 10);
+}
+
 Model* Scene::findModel(btRigidBody* body){
   for (size_t i = 0; i < models_.size(); i++){
-    if(body != nullptr && models_[i].getRigidBody() != nullptr){
+    if(body != nullptr && models_[i].getRigidBody() != nullptr ){
       if(body == models_[i].getRigidBody()){
         return &models_[i];
+      }
+    }
+  }
+  for (size_t i = 0; i < lights_.size(); i++){
+    if(body != nullptr && lights_[i].getRigidBody() != nullptr ){
+      if(body == lights_[i].getRigidBody()){
+        return &lights_[i];
       }
     }
   }
@@ -240,3 +231,7 @@ Model* Scene::findModel(btRigidBody* body){
 // TODO Bloom effect for lights
 //
 // TODO Faire une map sur papier des classes Models, Mesh etc...
+//
+// TODO boost::flyweight (juste savoir ce que c'est...)
+//
+// TODO !!!! Search for and learn to use good debugging tools

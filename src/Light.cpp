@@ -8,7 +8,8 @@ Light::Light(LightType type, glm::vec3 color, glm::vec3 position,
   lightType_(type),
   diffuseColor_(color),
   specularColor_(color),
-  direction_(direction)
+  direction_(direction),
+  intensity_(1)
 {
   ambientColor_ = glm::vec3(0.2f, 0.2f, 0.2f);
 }

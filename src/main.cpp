@@ -1,5 +1,3 @@
-#define BT_USE_DOUBLE_PRECISION
-
 #include "../include/Scene.h"
 #include "../include/includes.h"
 

@@ -29,6 +29,7 @@ CPPFLAGS := -DGLEW_STATIC -MMD -MP $(INCLUDES)
 # C++ compiler settings
 CXX = g++
 CXXFLAGS = -std=c++17
+#CXXDEFINES = -DBT_USE_DOUBLE_PRECISION
 WARNINGS = -Wall -Wpedantic -Wextra #-Wconversion
 
 # Linker flags

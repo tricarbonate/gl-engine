@@ -9,6 +9,9 @@
 #include "Camera.h"
 #include "Terrain.h"
 #include "Assets.h"
+#include "PhysicsEngine.h"
+#include "DirectionalLight.h"
+#include "PointLight.h"
 
 #include <bullet/btBulletDynamicsCommon.h>
 
@@ -37,16 +40,13 @@ class Scene{
 
   private:
 
-    //std::unordered_map<std::string, Texture> textures_;
-    //std::unordered_map<std::string, Material> materials_;
-    //std::unordered_map<std::string, Mesh> meshes_;
-
     std::vector<Model> models_;
     std::vector<Mirror> mirrors_;
     std::vector<Light> lights_;
 
     Terrain terrain_;
     ShaderManager sm_; 
+    PhysicsEngine physicsEngine_;
 
     double deltaTime_;
 
@@ -66,10 +66,12 @@ class Scene{
     // draw the terrain
     void drawTerrain();
 
+    void stepSimulation();
 
     /* Bullet Physics */
 
     //setup default configuration for collision detection
+    /*
     btDefaultCollisionConfiguration* collisionConfiguration_ = new btDefaultCollisionConfiguration();
      
     btCollisionDispatcher* dispatcher_ = new btCollisionDispatcher(collisionConfiguration_);
@@ -82,6 +84,7 @@ class Scene{
 	overlappingPairCache_, solver_, collisionConfiguration_);
 
     btAlignedObjectArray<btCollisionShape*> collisionShapes_;
+    */
 
     Model* findModel(btRigidBody* body);
 
