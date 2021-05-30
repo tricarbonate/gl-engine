@@ -53,8 +53,8 @@ void defineAssets(){
   Assets::shaders.push_back({"terrain_flatshader", {
       {TERRAIN_FLATSHADER_VERT_LOC, GL_VERTEX_SHADER}, {TERRAIN_FLATSHADER_FRAG_LOC, GL_FRAGMENT_SHADER}
       }});
-
 }
+
 
 int main(){
 

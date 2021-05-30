@@ -3,6 +3,7 @@
 
 #include "ShaderProgram.h"
 #include "Model.h"
+#include "Assets.h"
 
 #include <unordered_map>
 #include <vector>

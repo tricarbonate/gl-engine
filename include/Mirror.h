@@ -9,7 +9,7 @@
 class Mirror : public Model{
   public:
     Mirror();
-    Mirror(Mesh* mesh, ShaderProgram* shaderProgram, glm::vec3 position);
+    Mirror(std::string mesh, ShaderProgram* shaderProgram, glm::vec3 position);
     ~Mirror();
 
 

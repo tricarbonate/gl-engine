@@ -1,6 +1,6 @@
 #version 400 core 
 
-#define NR_POINT_LIGHTS 10
+#define NR_POINT_LIGHTS 500
 
 layout(location = 0) in vec3 inPos;
 layout(location = 1) in vec3 inNorm;

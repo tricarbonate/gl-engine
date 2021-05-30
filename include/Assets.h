@@ -9,6 +9,9 @@
 #include <unordered_map>
 #include <string>
 
+
+class ShaderProgram;
+
 /* All publicly available game assets
  * like textures, materials, meshes and shader programs
  * can be created using Assets class
@@ -22,6 +25,7 @@ class Assets : public Singleton<Assets>
     static std::unordered_map<std::string, Texture> textures;
     static std::unordered_map<std::string, Material> materials;
     static std::unordered_map<std::string, Mesh> meshes;
+    static std::unordered_map<std::string, ShaderProgram*> shaderPrograms;
 
     //Assets only create a ShaderSchema list that the shader manager uses
     static std::vector<ShaderSchema> shaders;

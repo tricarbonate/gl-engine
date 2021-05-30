@@ -5,6 +5,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Mesh.h"
+#include "Assets.h"
 
 // Forward declaration of ShaderProgram to avoid recursive include of files
 // Model class only need a reference to a ShaderProgram (in this file)
@@ -23,8 +24,8 @@ class Model {
 
   public:
     Model();
-    Model(Mesh* mesh, const char* shaderName, ShaderProgram* shaderProgram,
-        glm::vec3 position);
+    Model(std::string mesh, const char* shaderName, ShaderProgram* shaderProgram,
+        glm::vec3 position, COLLISION_SHAPES type = CUBE);
     
     void draw();
 
@@ -35,6 +36,7 @@ class Model {
     btRigidBody* getRigidBody() { return body_; }
     glm::vec3 getPosition() const { return position_; }
     glm::vec3 getOrientation() { return orientation_; }
+    COLLISION_SHAPES getCollisionShapeType() { return collisionShapeType_; }
 
     // setters
     void setPosition(glm::vec3 position) { position_ = position; }
@@ -42,6 +44,7 @@ class Model {
     void setConvexHullShape();
     void setTransform(btTransform trans) { trans_ = trans; }
     void setMesh(Mesh* mesh) { mesh_ = mesh; }
+    void setCollisionShapeType(COLLISION_SHAPES type) { collisionShapeType_ = type; }
 
     void updatePosition(btTransform trans);
 
@@ -60,7 +63,9 @@ class Model {
     glm::vec<3, double, glm::defaultp> currentSpeed_;
     glm::vec<3, double, glm::defaultp> acceleration_;
 
+    COLLISION_SHAPES collisionShapeType_;
     btCollisionShape* collisionShape_;
+
     btRigidBody* body_;
     btTransform trans_;
 };

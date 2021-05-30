@@ -1,6 +1,6 @@
 #version 330 core
 
-#define NR_POINT_LIGHTS 10 
+#define NR_POINT_LIGHTS 500
 
 in vec3 fragNorm;
 in vec3 fragPos;

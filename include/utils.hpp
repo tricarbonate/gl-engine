@@ -6,9 +6,14 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <stdlib.h>
+#include <time.h>
+#include <random>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+
+#include <glm/vec3.hpp>
 
 int failed(std::string message);
 
@@ -21,5 +26,8 @@ GLFWwindow* initializeWindow(const unsigned int windowHeight, const unsigned int
 int initializeGlew(GLFWwindow *window);
 
 int initializeGlfw();
+
+// function that generates a random vec3 with values in between min and max
+glm::vec3 randomVec3(int min, int max, int nDecimals = 0);
 
 #endif // UTILS_HPP

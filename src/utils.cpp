@@ -6,7 +6,6 @@ int failed(std::string message){
   return 1;
 }
 
-
 float getDeltaTime(float &lastFrame){
   float currentFrame= (float)glfwGetTime();
   float deltaTime = currentFrame - lastFrame;
@@ -68,3 +67,15 @@ int initializeGlfw(){
 
   return 0;
 }
+
+glm::vec3 randomVec3(int min, int max, int nDecimals){
+  std::random_device rd;
+  std::default_random_engine eng(rd());
+  std::uniform_real_distribution<double> distr(min, max);
+
+  double x = distr(eng);
+  double y = distr(eng);
+  double z = distr(eng);
+  return glm::vec3(x, y, z);
+}
+

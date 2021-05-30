@@ -1,7 +1,7 @@
 #include "../include/Mirror.h"
 
 
-Mirror::Mirror(Mesh* mesh, ShaderProgram* shaderProgram, glm::vec3 position):
+Mirror::Mirror(std::string mesh, ShaderProgram* shaderProgram, glm::vec3 position):
     Model(mesh, "mainShader", shaderProgram, position)
 {}
 

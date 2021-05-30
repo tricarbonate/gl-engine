@@ -7,7 +7,7 @@ class Quad : public Model {
   public:
 
     Quad() = default;
-    Quad(Mesh* mesh, ShaderProgram* shaderProrgam, glm::vec3 position);
+    Quad(std::string mesh, ShaderProgram* shaderProrgam, glm::vec3 position);
 
   private:
      

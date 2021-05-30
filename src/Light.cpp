@@ -3,7 +3,7 @@
 Light::Light(){}
 
 Light::Light(LightType type, glm::vec3 color, glm::vec3 position,
-    glm::vec3 direction, Mesh* mesh, ShaderProgram* shaderProgram):
+    glm::vec3 direction, std::string mesh, ShaderProgram* shaderProgram):
   Model(mesh, "lightingShader", shaderProgram, position),
   lightType_(type),
   diffuseColor_(color),

@@ -13,6 +13,8 @@ ShaderManager::ShaderManager(std::vector<ShaderSchema> shaders)
         }; 
 
         shaders_[shaders[i].first].first.compileProgram();
+
+        //Assets::shaderPrograms[shaders[i].first] = &shaders_[shaders[i].first].first; 
     }
 }
 

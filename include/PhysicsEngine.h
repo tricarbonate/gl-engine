@@ -21,16 +21,17 @@ class PhysicsEngine{
     void addObject(Model* model, COLLISION_SHAPES shape = CUBE, double data = 0.5);
     void addTerrain(Terrain* terrain);
 
-    void stepSimulation(double deltaTime);
     void updateWorldPhysics(double deltaTime);
 
     btDiscreteDynamicsWorld* getDynamicsWorld() { return dynamicsWorld_; }
+
 
   private:
     std::vector<Model*> objects_; // objects_ contains pointers to all models (including lights)
     Terrain* terrain_; //for now a pointer to the terrain
 
     const double worldGravity_;
+
 
 
     btDefaultCollisionConfiguration* collisionConfiguration_ = new btDefaultCollisionConfiguration();
@@ -43,10 +44,8 @@ class PhysicsEngine{
 
     btAlignedObjectArray<btCollisionShape*> collisionShapes_;
 
+    // Helps to find the correspond world model of a btRigidBody quicklier
     std::unordered_map<btRigidBody*, Model*> corels_;
-
-    // find a model from its rigib body
-    Model* findModel(btRigidBody* body);
 };
 
 #endif // __PHYSICS_ENGINE_H__

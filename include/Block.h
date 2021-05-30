@@ -9,7 +9,7 @@
 class Block : public Model {
   public:
     Block() = default; 
-    Block(Mesh* mesh, ShaderProgram* shaderProgram, glm::vec3 position);
+    Block(std::string mesh, ShaderProgram* shaderProgram, glm::vec3 position);
 
   private:
     

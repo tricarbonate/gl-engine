@@ -11,6 +11,7 @@
 #include "Assets.h"
 #include "PhysicsEngine.h"
 #include "DirectionalLight.h"
+#include "utils.hpp"
 #include "PointLight.h"
 
 #include <bullet/btBulletDynamicsCommon.h>
@@ -31,12 +32,11 @@ class Scene{
     ~Scene();
 
     void setupScene();
-
     void drawScene(float deltaTime);
 
     Camera* getCamera() { return &camera_; }
 
-    void physics();
+    void addModel(Model model);
 
   private:
 
@@ -45,6 +45,7 @@ class Scene{
     std::vector<Light> lights_;
 
     Terrain terrain_;
+
     ShaderManager sm_; 
     PhysicsEngine physicsEngine_;
 
@@ -55,38 +56,10 @@ class Scene{
     Camera camera_;
     glm::mat4 modelMatrix_, viewMatrix_, projectionMatrix_, mvp_;
 
-    /* private methods for setup and drawing: */
 
-    // draw all the lights in 'lights_'
     void drawLights();
-
-    // draw all models, meshes, entities
     void drawEntities();
-
-    // draw the terrain
     void drawTerrain();
-
-    void stepSimulation();
-
-    /* Bullet Physics */
-
-    //setup default configuration for collision detection
-    /*
-    btDefaultCollisionConfiguration* collisionConfiguration_ = new btDefaultCollisionConfiguration();
-     
-    btCollisionDispatcher* dispatcher_ = new btCollisionDispatcher(collisionConfiguration_);
-
-    btBroadphaseInterface* overlappingPairCache_ = new btDbvtBroadphase();
-
-    btSequentialImpulseConstraintSolver* solver_ = new btSequentialImpulseConstraintSolver;
-
-    btDiscreteDynamicsWorld* dynamicsWorld_ = new btDiscreteDynamicsWorld(dispatcher_,
-	overlappingPairCache_, solver_, collisionConfiguration_);
-
-    btAlignedObjectArray<btCollisionShape*> collisionShapes_;
-    */
-
-    Model* findModel(btRigidBody* body);
 
     /* */ 
     int frameCounter_ = 0;

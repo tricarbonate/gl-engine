@@ -10,11 +10,13 @@ Model::Model():
 {}
 
 
-Model::Model(Mesh* mesh, const char* shaderName, ShaderProgram* shaderProgram, glm::vec3 position):
-  mesh_(mesh),
+Model::Model(std::string mesh, const char* shaderName, ShaderProgram* shaderProgram, glm::vec3 position,
+    COLLISION_SHAPES type):
   shaderProgram_({shaderName, shaderProgram}),
   position_(position)
-{}
+{
+  mesh_ = mesh == "nullptr" ? nullptr : &Assets::meshes[mesh];
+}
 
 void Model::draw(){
   glActiveTexture(GL_TEXTURE0);

@@ -15,6 +15,8 @@ class State :
     static bool fov_; 
     static bool cursorDisabled_;
     static bool fullScreenMode_;
+    static unsigned int nMaxModels;
+    static unsigned int nMaxLights;
 
   private:
     State();
