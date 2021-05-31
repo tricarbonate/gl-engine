@@ -20,7 +20,6 @@
 #include <map>
 #include <unordered_map>
 
-
 /*
  * The scene contains all the elements
  * to render */
@@ -28,7 +27,7 @@ class Scene{
 
   public:
 
-    Scene(GLFWwindow* window);
+    Scene(GLFWwindow* window, PhysicsEngine* engine);
     ~Scene();
 
     void setupScene();
@@ -49,7 +48,7 @@ class Scene{
     Terrain terrain_;
 
     ShaderManager sm_; 
-    PhysicsEngine physicsEngine_;
+    PhysicsEngine* physicsEngine_;
 
     double deltaTime_;
 

@@ -1,8 +1,9 @@
 #include "../include/Scene.h"
 
-Scene::Scene(GLFWwindow* window):
+Scene::Scene(GLFWwindow* window, PhysicsEngine* engine):
   models_(std::vector<Model>()),
   terrain_(Terrain()),
+  physicsEngine_(engine),
   window_(window)
 {
   models_.reserve(State::nMaxModels);
@@ -18,7 +19,7 @@ void Scene::setupScene(){
   for(unsigned int i = 0; i < 1; i ++){
     models_.push_back(Model("container", "mainShader", sm_.program("mainShader"),
           glm::vec3(5 * cos(i), 20 * tan(i), 5 * sin(i))));
-    physicsEngine_.addObject(&models_.back(), COLLISION_SHAPES::CUBE);
+    physicsEngine_->addObject(&models_.back(), COLLISION_SHAPES::CUBE);
   }
   
   
@@ -28,7 +29,7 @@ void Scene::setupScene(){
   physicsEngine_.addObject(&models_.back(), COLLISION_SHAPES::CONVEX_HULL); 
   */
 
-  physicsEngine_.addTerrain(&terrain_);
+  physicsEngine_->addTerrain(&terrain_);
 
   /* Initialization of lights */
   lights_ = {
@@ -48,7 +49,7 @@ void Scene::setupScene(){
   sm_.bindToModels(models_);
   for(size_t i = 1; i < lights_.size(); i++){
     //Oversized collision shape to facilitate light picking
-    physicsEngine_.addObject(&lights_[i], COLLISION_SHAPES::CUBE, 0.5);
+    physicsEngine_->addObject(&lights_[i], COLLISION_SHAPES::CUBE, 0.5);
   }
   std::cout << models_.size() << std::endl;
 }
@@ -61,7 +62,7 @@ void Scene::drawScene(float deltaTime){
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  physicsEngine_.updateWorldPhysics(deltaTime_);
+  physicsEngine_->updateWorldPhysics(deltaTime_);
 
   // definition of matrices:
   if(State::perspective_){
@@ -88,15 +89,16 @@ void Scene::drawScene(float deltaTime){
     btVector3 rayTo = getRayTo(int(xpos), int(ypos));
     glm::vec3 vec = camera_.getPos();
     btVector3 rayFrom = btVector3(vec.r, vec.g, vec.b);
+    Model* pickedModel = nullptr;
     if(!hasPicked_){
-      hasPicked_ = physicsEngine_.pickBody(rayFrom, rayTo);
+      hasPicked_ = physicsEngine_->pickBody(rayFrom, rayTo);
     }
     else{
-      physicsEngine_.movePickedBody(rayFrom, rayTo);
+      //physicsEngine_.movePickedBody(rayFrom, rayTo);
     }
   }
   else{
-    physicsEngine_.removePickingConstraint();
+    physicsEngine_->removePickingConstraint();
     hasPicked_ = false;
   }
 
@@ -105,7 +107,7 @@ void Scene::drawScene(float deltaTime){
   if(frameCounter_ > 200){
     models_.push_back(Model("container", "mainShader", sm_.program("mainShader"),
           randomVec3(1, 10)));
-    physicsEngine_.addObject(&models_.back(), COLLISION_SHAPES::CUBE, 0.5);
+    physicsEngine_->addObject(&models_.back(), COLLISION_SHAPES::CUBE, 0.5);
     
     /*
     lights_.push_back(Light(LightType::POINT, glm::vec3(0.1f, 0.1f, 0.8f),
@@ -190,7 +192,7 @@ void Scene::drawTerrain(){
 
 void Scene::addModel(Model model){
   models_.push_back(model);
-  physicsEngine_.addObject(&models_.back());
+  physicsEngine_->addObject(&models_.back());
   sm_.bindToModels(models_);  
 }
 

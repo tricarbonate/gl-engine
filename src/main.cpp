@@ -10,11 +10,16 @@
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 
+#include <stdlib.h>
+#include <stdio.h>
+
 const unsigned int WINDOW_HEIGHT = 1200;
 const unsigned int WINDOW_WIDTH = 1600;
 
 static float DELTA_TIME = 0.0f;
 static float LAST_FRAME = 0.0f;
+
+#define STRING(num) #num
 
 /* ASSETS DEFINITION */
 void defineAssets(){
@@ -65,10 +70,11 @@ int main(){
   GLFWwindow* window;
   window = initializeWindow(WINDOW_HEIGHT, WINDOW_WIDTH);
 
+  PhysicsEngine physicsEngine;
   initializeGlew(window);
 
   defineAssets();
-  Scene scene = Scene(window);
+  Scene scene = Scene(window, &physicsEngine);
   scene.setupScene();
   
   EventHandler eventHandler(window, scene.getCamera());
@@ -114,10 +120,14 @@ int main(){
 
       //printStateReport(DELTA_TIME, 200);
       scene.drawScene(DELTA_TIME);
+      Model* pickedModel = physicsEngine.getPickedModel();
 
       // render your GUI
       ImGui::Begin("Demo window");
-      ImGui::Button("Hello!");
+      if(pickedModel!=nullptr){
+        std::string str = std::to_string(pickedModel->getPosition().g);
+        ImGui::Button(str.c_str());
+      }
       ImGui::End();
 
       ImGui::Render();

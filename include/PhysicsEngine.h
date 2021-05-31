@@ -32,6 +32,8 @@ class PhysicsEngine{
     bool movePickedBody(const btVector3& rayFromWorld, const btVector3& rayToWorld);
     void removePickingConstraint();
 
+    Model* getPickedModel();
+
   private:
     std::vector<Model*> objects_; // objects_ contains pointers to all models (including lights)
     Terrain* terrain_; //for now a pointer to the terrain

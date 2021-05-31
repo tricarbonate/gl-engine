@@ -83,6 +83,9 @@ void PhysicsEngine::updateWorldPhysics(double deltaTime)
     }
 }
 
+Model* PhysicsEngine::getPickedModel(){
+  return corels_[pickedBody_];
+}
 
 bool PhysicsEngine::pickBody(const btVector3& rayFromWorld, const btVector3& rayToWorld){
   if(dynamicsWorld_ == 0)
