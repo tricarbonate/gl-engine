@@ -21,18 +21,19 @@ void Scene::setupScene(){
     physicsEngine_.addObject(&models_.back(), COLLISION_SHAPES::CUBE);
   }
   
-  /*
-  //theire model 
+  
+  /*theire model 
   models_.push_back(Model("theiere", "mainShader", sm_.program("mainShader"),
         glm::vec3(4.0f, 10.0f, 0.0f)));
-  physicsEngine_.addObject(&models_.back(), COLLISION_SHAPES::CONVEX_HULL); */
+  physicsEngine_.addObject(&models_.back(), COLLISION_SHAPES::CONVEX_HULL); 
+  */
 
   physicsEngine_.addTerrain(&terrain_);
 
   /* Initialization of lights */
   lights_ = {
     DirectionalLight(glm::vec3(0.2f, 0.2f, 0.2f),
-        glm::vec3(-0.1f, -1.0f, 0.0f)),
+        glm::vec3(0.0f, -1.0f, 0.0f)),
     PointLight(glm::vec3(0.8f, 0.8f, 0.8f),
         glm::vec3(0.0f, 2.0f, 0.0f), glm::vec3(), "container", sm_.program("lightingShader")),
     PointLight(glm::vec3(0.9f, 0.4f, 0.4f),
@@ -46,7 +47,8 @@ void Scene::setupScene(){
   
   sm_.bindToModels(models_);
   for(size_t i = 1; i < lights_.size(); i++){
-    physicsEngine_.addObject(&lights_[i], COLLISION_SHAPES::CUBE, 0.05);
+    //Oversized collision shape to facilitate light picking
+    physicsEngine_.addObject(&lights_[i], COLLISION_SHAPES::CUBE, 0.5);
   }
   std::cout << models_.size() << std::endl;
 }
@@ -94,6 +96,7 @@ void Scene::drawScene(float deltaTime){
     }
   }
   else{
+    physicsEngine_.removePickingConstraint();
     hasPicked_ = false;
   }
 
@@ -206,7 +209,7 @@ btVector3 Scene::getRayTo(int x, int y){
   vertical = horizontal.cross(rayDir);
   vertical.safeNormalize();
 
-  float tanfov = tanf(0.5f * State::fov_);
+  float tanfov = tanf(0.5f * glm::radians(State::fov_));
   horizontal *= 2.0f * State::farPlane_ * tanfov;
   vertical *= 2.0f * State::farPlane_ * tanfov;
 

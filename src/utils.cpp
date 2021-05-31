@@ -14,16 +14,24 @@ float getDeltaTime(float &lastFrame){
 }
 
 void printMSperFrame(double deltaTime){
+}
+
+void printStateReport(double deltaTime, int nFrames){
+  std::cout << "--REPORT--" << std::endl;
+  /* PRINTS ms/frames */
   static double deltaCount;
   static double frameCount;
   deltaCount += deltaTime;
   frameCount++;
-  // prints every 200 frames
-  if(frameCount >= 200){
-    std::cout << double(deltaCount / 200) * 1000 << " ms/frame" << std::endl;
+  // prints every nframes frames
+  if(frameCount >= nFrames){
+    std::cout << double(deltaCount / nFrames) * 1000 << " ms/frame" << std::endl;
+    std::string str = State::picking_ == true ? "YES" : "NO";
+    std::cout << "Currently picking : " << str << std::endl; 
     deltaCount = 0;
     frameCount = 0;
   }
+  std::cout << std::endl;
 }
 
 GLFWwindow* initializeWindow(const unsigned int windowHeight, const unsigned int windowWidth){ 

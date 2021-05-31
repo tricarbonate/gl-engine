@@ -112,7 +112,7 @@ int main(){
       ImGui_ImplGlfw_NewFrame();
       ImGui::NewFrame();
 
-      printMSperFrame(DELTA_TIME);
+      //printStateReport(DELTA_TIME, 200);
       scene.drawScene(DELTA_TIME);
 
       // render your GUI

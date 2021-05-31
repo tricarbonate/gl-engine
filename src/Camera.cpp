@@ -73,5 +73,7 @@ void Camera::updateOrientation(double xpos, double ypos)
   direction.y = (float)(sin(glm::radians(pitch_)));
   direction.z = (float)(sin(glm::radians(yaw_)) * cos(glm::radians(pitch_)));
   front_ = glm::normalize(direction);
+  right_ = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), front_));
+  up_ = glm::normalize(glm::cross(front_, right_));
 }
 

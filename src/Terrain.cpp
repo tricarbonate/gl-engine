@@ -48,4 +48,22 @@ void Terrain::draw(glm::mat4 &model, glm::mat4& view, glm::mat4 &proj, ShaderPro
     }
 }
 
+int Terrain::getWidth(){
+
+}
+int Terrain::getLength(){
+
+}
+const void* Terrain::getRawData(){
+
+}
+float Terrain::getHeightScale(){
+
+}
+float Terrain::getMinHeight(){
+
+}
+float Terrain::getMaxHeight(){
+
+}
 

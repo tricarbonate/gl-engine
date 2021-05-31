@@ -29,6 +29,15 @@ class Terrain {
     //getters
     double getBaseHeight() { return baseHeight_; }
 
+
+    // TODO for btHeightfield
+    int getWidth();
+    int getLength();
+    const void* getRawData();
+    float getHeightScale();
+    float getMinHeight();
+    float getMaxHeight();
+
   private:
     std::vector<Chunk> chunks_;    
 

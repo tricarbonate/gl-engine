@@ -10,11 +10,11 @@ Chunk::~Chunk(){
 }
 
 void Chunk::generateMapChunk(int xOffset, int zOffset){
-    std::vector<GLuint> indices = generateIndices();
-    std::vector<float> noiseMap = generateNoiseMap(xOffset, zOffset);
-    std::vector<float> vertices = generateVertices(noiseMap);
-    std::vector<float> normals = generateNormals(indices, vertices);
-    std::vector<float> colors = generateColor(vertices, xOffset, zOffset);
+    indices_ = generateIndices();
+    noiseMap_ = generateNoiseMap(xOffset, zOffset);
+    vertices_ = generateVertices(noiseMap_);
+    normals_ = generateNormals(indices_, vertices_);
+    colors_ = generateColor(vertices_, xOffset, zOffset);
 
     glGenBuffers(3, vbo_);
     glGenBuffers(1, &ebo_);
@@ -23,11 +23,11 @@ void Chunk::generateMapChunk(int xOffset, int zOffset){
     // Bind vertices to VBO
     glBindVertexArray(vao_);
     glBindBuffer(GL_ARRAY_BUFFER, vbo_[0]);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), &vertices[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertices_.size() * sizeof(float), &vertices_[0], GL_STATIC_DRAW);
     
     // Create element buffer
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(int), &indices[0], GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_.size() * sizeof(int), &indices_[0], GL_STATIC_DRAW);
     
     // Configure vertex position attribute
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
@@ -35,7 +35,7 @@ void Chunk::generateMapChunk(int xOffset, int zOffset){
     
     // Bind vertices to VBO
     glBindBuffer(GL_ARRAY_BUFFER, vbo_[1]);
-    glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(float), &normals[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, normals_.size() * sizeof(float), &normals_[0], GL_STATIC_DRAW);
     
     // Configure vertex normals attribute
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
@@ -43,7 +43,7 @@ void Chunk::generateMapChunk(int xOffset, int zOffset){
 
     // Bind vertices to VBO
     glBindBuffer(GL_ARRAY_BUFFER, vbo_[2]);
-    glBufferData(GL_ARRAY_BUFFER, colors.size() * sizeof(float), &colors[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, colors_.size() * sizeof(float), &colors_[0], GL_STATIC_DRAW);
     
     // Configure vertex colors attribute
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);

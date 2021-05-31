@@ -15,11 +15,13 @@
 
 #include <glm/vec3.hpp>
 
+#include "State.h"
+
 int failed(std::string message);
 
 float getDeltaTime(float &lastFrame);
 
-void printMSperFrame(double deltaTime);
+void printStateReport(double deltaTime, int nFrame);
 
 GLFWwindow* initializeWindow(const unsigned int windowHeight, const unsigned int windowWidth);
 

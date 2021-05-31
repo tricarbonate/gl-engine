@@ -12,7 +12,7 @@
 
 //noise params
 const int octaves = 5;
-const float meshHeight = 0;  // Vertical scaling
+const float meshHeight = 16;  // Vertical scaling
 const float noiseScale = 64;  // Horizontal scaling
 const float persistence = 0.5;
 const float lacunarity = 2;
@@ -40,6 +40,12 @@ private:
     std::vector<float> generateVertices(const std::vector<float> &noiseMap);
     std::vector<float> generateNormals(const std::vector<GLuint> &indices, const std::vector<float> &vertices);
     std::vector<float> generateColor(const std::vector<float> &vertices, int xOffset, int zOffset);
+
+    std::vector<GLuint> indices_;
+    std::vector<float> noiseMap_;
+    std::vector<float> vertices_;
+    std::vector<float> normals_;
+    std::vector<float> colors_;
 
     GLuint vao_, ebo_, vbo_[3];
 };

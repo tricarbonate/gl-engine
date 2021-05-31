@@ -3,6 +3,7 @@
 
 #include <bullet/btBulletDynamicsCommon.h>
 #include <BulletCollision/NarrowPhaseCollision/btRaycastCallback.h>
+#include <BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h>
 
 #include <vector>
 #include <memory>
@@ -21,6 +22,7 @@ class PhysicsEngine{
 
     void addObject(Model* model, COLLISION_SHAPES shape = CUBE, double data = 0.5);
     void addTerrain(Terrain* terrain);
+    void addHeightField(Terrain* terrain);
 
     void updateWorldPhysics(double deltaTime);
 
@@ -28,6 +30,7 @@ class PhysicsEngine{
 
     bool pickBody(const btVector3& rayFromWorld, const btVector3& rayToWorld);
     bool movePickedBody(const btVector3& rayFromWorld, const btVector3& rayToWorld);
+    void removePickingConstraint();
 
   private:
     std::vector<Model*> objects_; // objects_ contains pointers to all models (including lights)
@@ -50,6 +53,10 @@ class PhysicsEngine{
     btVector3 oldPickingPos_;
     btVector3 hitPos_;
     btScalar oldPickingDist_;
+
+
+    /* Terrain heightfield */
+    btHeightfieldTerrainShape* heightfieldShape_;
 
     // Helps to find the correspond world model of a btRigidBody quicklier
     std::unordered_map<btRigidBody*, Model*> corels_;

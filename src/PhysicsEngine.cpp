@@ -50,6 +50,13 @@ void PhysicsEngine::addTerrain(Terrain* terrain){
     dynamicsWorld_->addRigidBody(body);
 }
 
+void PhysicsEngine::addHeightField(Terrain* terrain){
+  heightfieldShape_ = new btHeightfieldTerrainShape(terrain->getWidth(), terrain->getLength(),
+      terrain->getRawData(), terrain->getHeightScale(),
+      terrain->getMinHeight(), terrain->getMaxHeight(),
+      1, PHY_FLOAT, false); 
+}
+
 
 void PhysicsEngine::updateWorldPhysics(double deltaTime)
 {
@@ -102,7 +109,7 @@ bool PhysicsEngine::pickBody(const btVector3& rayFromWorld, const btVector3& ray
       btPoint2PointConstraint* p2p = new btPoint2PointConstraint(*body, localPivot);
       dynamicsWorld_->addConstraint(p2p, true);
       pickedConstraint_ = p2p;
-      btScalar mousePickClamping = 50.f;
+      btScalar mousePickClamping = 100.f;
       p2p->m_setting.m_impulseClamp = mousePickClamping;
       //very weak constraint for picking
       p2p->m_setting.m_tau = 0.001f;
@@ -128,7 +135,6 @@ bool PhysicsEngine::movePickedBody(const btVector3& rayFromWorld, const btVector
     if (pickCon)
     {
       //keep it at the same picking distance
-
       btVector3 newPivotB;
 
       btVector3 dir = rayToWorld - rayFromWorld;
@@ -143,6 +149,15 @@ bool PhysicsEngine::movePickedBody(const btVector3& rayFromWorld, const btVector
   return false;
 }
 
-
+void PhysicsEngine::removePickingConstraint(){
+  if(pickedConstraint_){
+    pickedBody_->forceActivationState(savedState_);
+    pickedBody_->activate();
+    dynamicsWorld_->removeConstraint(pickedConstraint_);
+    delete pickedConstraint_;
+    pickedConstraint_ = 0;
+    pickedBody_ = 0;
+  }
+}
 
 
