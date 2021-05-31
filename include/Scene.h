@@ -28,7 +28,7 @@ class Scene{
 
   public:
 
-    Scene();
+    Scene(GLFWwindow* window);
     ~Scene();
 
     void setupScene();
@@ -44,6 +44,8 @@ class Scene{
     std::vector<Mirror> mirrors_;
     std::vector<Light> lights_;
 
+    GLFWwindow* window_;
+
     Terrain terrain_;
 
     ShaderManager sm_; 
@@ -52,10 +54,12 @@ class Scene{
     double deltaTime_;
 
     double test_ = 0.0f;
+    double hasPicked_ = false;
 
     Camera camera_;
     glm::mat4 modelMatrix_, viewMatrix_, projectionMatrix_, mvp_;
 
+    btVector3 getRayTo(int x, int y);
 
     void drawLights();
     void drawEntities();

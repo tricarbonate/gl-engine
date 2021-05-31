@@ -68,7 +68,7 @@ int main(){
   initializeGlew(window);
 
   defineAssets();
-  Scene scene;
+  Scene scene = Scene(window);
   scene.setupScene();
   
   EventHandler eventHandler(window, scene.getCamera());

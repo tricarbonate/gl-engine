@@ -68,7 +68,7 @@ int initializeGlfw(){
   return 0;
 }
 
-glm::vec3 randomVec3(int min, int max, int nDecimals){
+glm::vec3 randomVec3(double min, double max){
   std::random_device rd;
   std::default_random_engine eng(rd());
   std::uniform_real_distribution<double> distr(min, max);

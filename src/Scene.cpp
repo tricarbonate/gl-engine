@@ -1,8 +1,9 @@
 #include "../include/Scene.h"
 
-Scene::Scene():
+Scene::Scene(GLFWwindow* window):
   models_(std::vector<Model>()),
-  terrain_(Terrain())
+  terrain_(Terrain()),
+  window_(window)
 {
   models_.reserve(State::nMaxModels);
   lights_.reserve(State::nMaxLights);
@@ -62,12 +63,13 @@ void Scene::drawScene(float deltaTime){
 
   // definition of matrices:
   if(State::perspective_){
-    projectionMatrix_ = glm::perspective(glm::radians(45.0f),
-          (float)1600 / (float)1200 , 0.1f, 1000.0f);
+    projectionMatrix_ = glm::perspective(glm::radians(State::fov_),
+          State::screenWidth_ / State::screenHeight_, State::nearPlane_, State::farPlane_);
   }
   else{
     projectionMatrix_ = glm::ortho(-3.0, 3.0, -3.0, 3.0, 1.0, 100.0);
   }
+
 
   viewMatrix_ = camera_.lookAt();
   modelMatrix_ = glm::mat4(1.0f);
@@ -77,11 +79,29 @@ void Scene::drawScene(float deltaTime){
   drawLights();
   drawTerrain();
 
+  
+  if(State::picking_){
+    GLdouble xpos, ypos;
+    glfwGetCursorPos(window_, &xpos, &ypos);
+    btVector3 rayTo = getRayTo(int(xpos), int(ypos));
+    glm::vec3 vec = camera_.getPos();
+    btVector3 rayFrom = btVector3(vec.r, vec.g, vec.b);
+    if(!hasPicked_){
+      hasPicked_ = physicsEngine_.pickBody(rayFrom, rayTo);
+    }
+    else{
+      physicsEngine_.movePickedBody(rayFrom, rayTo);
+    }
+  }
+  else{
+    hasPicked_ = false;
+  }
+
   // creates a new model (theier) to draw every 10000 frames.
   // and a new light
-  if(frameCounter_ > 20){
+  if(frameCounter_ > 200){
     models_.push_back(Model("container", "mainShader", sm_.program("mainShader"),
-          randomVec3(-10, 10)));
+          randomVec3(1, 10)));
     physicsEngine_.addObject(&models_.back(), COLLISION_SHAPES::CUBE, 0.5);
     
     /*
@@ -97,6 +117,18 @@ void Scene::drawScene(float deltaTime){
 
     frameCounter_ = 0;
   }
+
+  /*
+  if(frameCounter_ > 100){
+
+    for (size_t i = 0; i < models_.size(); i++){
+      btTransform trans;
+      glm::vec3 vec = models_[i].getPosition() + randomVec3(0.001, 0.01);
+      trans.setOrigin(btVector3(vec.r, vec.g, vec.b));
+      models_[i].updatePosition(trans);
+    }
+  }
+  */
 }
 
 
@@ -159,6 +191,36 @@ void Scene::addModel(Model model){
   sm_.bindToModels(models_);  
 }
 
+btVector3 Scene::getRayTo(int x, int y){
+  btVector3 rayFrom, rayDir;
+
+  rayFrom = btVector3(camera_.getPos().r, camera_.getPos().g, camera_.getPos().b);
+  rayDir = btVector3(camera_.getFront().r, camera_.getFront().g, camera_.getFront().b);
+
+  rayDir.normalize();
+  rayDir *= State::farPlane_;
+  //btVector3 rightOffset;
+  btVector3 vertical(0, 1, 0);
+  btVector3 horizontal = rayDir.cross(vertical);
+  horizontal.safeNormalize();
+  vertical = horizontal.cross(rayDir);
+  vertical.safeNormalize();
+
+  float tanfov = tanf(0.5f * State::fov_);
+  horizontal *= 2.0f * State::farPlane_ * tanfov;
+  vertical *= 2.0f * State::farPlane_ * tanfov;
+
+  btScalar aspect = State::screenWidth_ / State::screenHeight_;
+  horizontal *= aspect;
+
+  btVector3 rayToCenter = rayFrom + rayDir;
+  btVector3 dHor = horizontal * 1.0f / State::screenWidth_;
+  btVector3 dVert = vertical * 1.0f / State::screenHeight_;
+  btVector3 rayTo = rayToCenter - 0.5f * horizontal + 0.5f * vertical;
+  rayTo += btScalar(x) * dHor;
+  rayTo -= btScalar(y) * dVert;
+  return rayTo;
+}
 
 // TODO have lights move with deltaTime
 // TODO better lighting system, (maybe Entity class?)
@@ -181,6 +243,9 @@ void Scene::addModel(Model model){
 // TODO change sm_.bindToModels to accept only one new model
 
 // TODO Mouse picking (with bullet physics?)
+// TODO Should not pick the terrain
+// TODO Add a shader for picked object
+// TODO Move rayTo() function (where?)
 // TODO Controller inputs?
 
 // TODO More usable Terrain class
@@ -205,3 +270,13 @@ void Scene::addModel(Model model){
 //
 // TODO !!!! Search for and learn to use good debugging tools
 // TODO search for boost::ptr_vector
+//
+//
+// TODO Cleanup functions for pointers :
+// - Custurm pointers...
+// - bullet physics cleanup...
+// - gl and window cleanup...
+//
+// TODO Add debug functions
+//
+// TODO Change aspect ratio (perspective) for window resizes

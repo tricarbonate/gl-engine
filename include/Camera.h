@@ -20,6 +20,9 @@ class Camera{
     glm::vec3 getPos() { return pos_; }
     float getSpeed() { return speed_; }
     glm::vec3 getFront() { return front_; }
+    glm::vec3 getDirection() { return dir_; }
+    glm::vec3 getRight() { return right_; }
+    glm::vec3 getUp() { return up_; }
 
     // setters
     void setPos(glm::vec3 pos) {pos_ = pos;}

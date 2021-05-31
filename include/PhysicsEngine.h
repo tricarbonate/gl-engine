@@ -2,6 +2,7 @@
 #define __PHYSICS_ENGINE_H__
 
 #include <bullet/btBulletDynamicsCommon.h>
+#include <BulletCollision/NarrowPhaseCollision/btRaycastCallback.h>
 
 #include <vector>
 #include <memory>
@@ -25,6 +26,8 @@ class PhysicsEngine{
 
     btDiscreteDynamicsWorld* getDynamicsWorld() { return dynamicsWorld_; }
 
+    bool pickBody(const btVector3& rayFromWorld, const btVector3& rayToWorld);
+    bool movePickedBody(const btVector3& rayFromWorld, const btVector3& rayToWorld);
 
   private:
     std::vector<Model*> objects_; // objects_ contains pointers to all models (including lights)
@@ -32,17 +35,21 @@ class PhysicsEngine{
 
     const double worldGravity_;
 
-
-
-    btDefaultCollisionConfiguration* collisionConfiguration_ = new btDefaultCollisionConfiguration();
-    btCollisionDispatcher* dispatcher_ = new btCollisionDispatcher(collisionConfiguration_);
-    btBroadphaseInterface* overlappingPairCache_ = new btDbvtBroadphase();
-    btSequentialImpulseConstraintSolver* solver_ = new btSequentialImpulseConstraintSolver;
-
-    btDiscreteDynamicsWorld* dynamicsWorld_ = new btDiscreteDynamicsWorld(dispatcher_,
-	overlappingPairCache_, solver_, collisionConfiguration_);
-
+    /* BULLET PHYSICS */
+    btDefaultCollisionConfiguration* collisionConfiguration_;
+    btCollisionDispatcher* dispatcher_;
+    btBroadphaseInterface* overlappingPairCache_;
+    btSequentialImpulseConstraintSolver* solver_;
+    btDiscreteDynamicsWorld* dynamicsWorld_;
     btAlignedObjectArray<btCollisionShape*> collisionShapes_;
+
+    /* data for picking object */
+    class btRigidBody* pickedBody_;
+    class btTypedConstraint* pickedConstraint_;
+    int savedState_;
+    btVector3 oldPickingPos_;
+    btVector3 hitPos_;
+    btScalar oldPickingDist_;
 
     // Helps to find the correspond world model of a btRigidBody quicklier
     std::unordered_map<btRigidBody*, Model*> corels_;

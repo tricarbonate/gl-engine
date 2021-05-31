@@ -19,11 +19,11 @@ class EventHandler{
 
     bool pressed(int key);
 
-
     GLFWwindow* window_;
     Camera* camera_;
 };
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 
 #endif //__EVENT_HANDLER_H__ 

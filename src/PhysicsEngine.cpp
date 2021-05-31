@@ -3,6 +3,14 @@
 PhysicsEngine::PhysicsEngine() :
     worldGravity_(-3)
 {
+  collisionConfiguration_ = new btDefaultCollisionConfiguration();
+  dispatcher_ = new btCollisionDispatcher(collisionConfiguration_);
+  overlappingPairCache_ = new btDbvtBroadphase();
+  solver_ = new btSequentialImpulseConstraintSolver;
+
+  dynamicsWorld_ = new btDiscreteDynamicsWorld(dispatcher_,
+    overlappingPairCache_, solver_, collisionConfiguration_);
+
   dynamicsWorld_->setGravity(btVector3(0, worldGravity_, 0));
 }
 
@@ -67,4 +75,74 @@ void PhysicsEngine::updateWorldPhysics(double deltaTime)
         
     }
 }
+
+
+bool PhysicsEngine::pickBody(const btVector3& rayFromWorld, const btVector3& rayToWorld){
+  if(dynamicsWorld_ == 0)
+    return false;
+
+  btCollisionWorld::ClosestRayResultCallback rayCallback(rayFromWorld, rayToWorld);
+
+  rayCallback.m_flags |= btTriangleRaycastCallback::kF_UseGjkConvexCastRaytest;
+  dynamicsWorld_->rayTest(rayFromWorld, rayToWorld, rayCallback);
+  if(rayCallback.hasHit())
+  {
+    btVector3 pickPos = rayCallback.m_hitPointWorld;
+    btRigidBody* body = (btRigidBody*)btRigidBody::upcast(rayCallback.m_collisionObject);
+    if (body)
+    {
+      //other exclusions?
+      if (!(body->isStaticObject() || body->isKinematicObject()))
+      {
+      pickedBody_ = body;
+      savedState_ = pickedBody_->getActivationState();
+      pickedBody_->setActivationState(DISABLE_DEACTIVATION);
+      std::cout << pickPos.getX() << pickPos.getY() << pickPos.getZ() << std::endl;
+      btVector3 localPivot = body->getCenterOfMassTransform().inverse() * pickPos;
+      btPoint2PointConstraint* p2p = new btPoint2PointConstraint(*body, localPivot);
+      dynamicsWorld_->addConstraint(p2p, true);
+      pickedConstraint_ = p2p;
+      btScalar mousePickClamping = 50.f;
+      p2p->m_setting.m_impulseClamp = mousePickClamping;
+      //very weak constraint for picking
+      p2p->m_setting.m_tau = 0.001f;
+      }
+    }
+
+    //pickObject(pickPos, rayCallback.m_collisionObject);
+    oldPickingPos_ = rayToWorld;
+    hitPos_ = pickPos;
+    oldPickingDist_ = (pickPos - rayFromWorld).length();
+    std::cout << "HIT" << std::endl;
+    return true;
+    //add p2p
+  }
+  return false;
+}
+
+
+bool PhysicsEngine::movePickedBody(const btVector3& rayFromWorld, const btVector3& rayToWorld){
+  if (pickedBody_ && pickedConstraint_)
+  {
+    btPoint2PointConstraint* pickCon = static_cast<btPoint2PointConstraint*>(pickedConstraint_);
+    if (pickCon)
+    {
+      //keep it at the same picking distance
+
+      btVector3 newPivotB;
+
+      btVector3 dir = rayToWorld - rayFromWorld;
+      dir.normalize();
+      dir *= oldPickingDist_;
+
+      newPivotB = rayFromWorld + dir;
+      pickCon->setPivotB(newPivotB);
+      return true;
+    }
+  }
+  return false;
+}
+
+
+
 

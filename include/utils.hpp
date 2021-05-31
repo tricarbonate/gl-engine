@@ -28,6 +28,6 @@ int initializeGlew(GLFWwindow *window);
 int initializeGlfw();
 
 // function that generates a random vec3 with values in between min and max
-glm::vec3 randomVec3(int min, int max, int nDecimals = 0);
+glm::vec3 randomVec3(double min, double max);
 
 #endif // UTILS_HPP

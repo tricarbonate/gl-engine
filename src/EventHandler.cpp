@@ -42,6 +42,7 @@ void EventHandler::handleKeys(float deltaTime){
 
     // State changes
     glfwSetKeyCallback(window_, key_callback);
+    glfwSetMouseButtonCallback(window_, mouse_button_callback);
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
@@ -62,6 +63,12 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         }
         State::cursorDisabled_ = !State::cursorDisabled_;
     }
+}
+
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods){
+    if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS){
+        State::picking_ = !State::picking_;
+    }     
 }
 
 
