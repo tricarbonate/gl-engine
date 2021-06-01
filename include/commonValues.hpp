@@ -31,6 +31,17 @@ static GLfloat quad[] = {
   -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
 };
 
+static float littleQuadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates. NOTE that this plane is now much smaller and at the top of the screen
+    // positions   // texCoords
+    -0.3f,  1.0f,  0.0f, 1.0f,
+    -0.3f,  0.7f,  0.0f, 0.0f,
+     0.3f,  0.7f,  1.0f, 0.0f,
+
+    -0.3f,  1.0f,  0.0f, 1.0f,
+     0.3f,  0.7f,  1.0f, 0.0f,
+     0.3f,  1.0f,  1.0f, 1.0f
+};
+
 static float quadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
     // positions   // texCoords
     -1.0f,  1.0f,  0.0f, 1.0f,

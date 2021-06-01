@@ -41,8 +41,11 @@ glm::mat4 Camera::lookAt(){
       up_);
 }
 
+void updateCameraVectors(){
+  //disabled pitch and yaw constraint
+}
 
-void Camera::updateOrientation(double xpos, double ypos)
+void Camera::updateOrientation(double xpos, double ypos, bool constrainPitch)
 {
   if(firstMouse)
   {
@@ -63,10 +66,12 @@ void Camera::updateOrientation(double xpos, double ypos)
   yaw_   += xoffset;
   pitch_ += yoffset;
 
-  if(pitch_ > 89.0f)
-      pitch_ = 89.0f;
-  if(pitch_ < -89.0f)
-      pitch_ = -89.0f;
+  if(constrainPitch){
+    if(pitch_ > 89.0f)
+        pitch_ = 89.0f;
+    if(pitch_ < -89.0f)
+        pitch_ = -89.0f;
+  }
 
   glm::vec3 direction;
   direction.x = (float)(cos(glm::radians(yaw_)) * cos(glm::radians(pitch_)));

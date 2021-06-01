@@ -71,8 +71,8 @@ void Scene::setupScene(){
 
   glGenTextures(1, &texture);
   glBindTexture(GL_TEXTURE_2D, texture);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, State::screenWidth_, State::screenHeight_,
-      0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, State::screenWidth_, State::screenHeight_,
+      0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   // attach the texture to the framebuffer.
@@ -88,6 +88,42 @@ void Scene::setupScene(){
   if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 	std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
+  /* MIRROR FRAME BUFFER VAO */
+  glGenVertexArrays(1, &mirrorVAO);
+  glGenBuffers(1, &mirrorVBO);
+  glBindVertexArray(mirrorVAO);
+  glBindBuffer(GL_ARRAY_BUFFER, mirrorVBO);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+  glEnableVertexAttribArray(0);
+  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+  glEnableVertexAttribArray(1);
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+
+  /* MIRROR FRAME BUFFER CREATION */
+  glGenFramebuffers(1, &mirrorFbo); 
+  glBindFramebuffer(GL_FRAMEBUFFER, mirrorFbo);
+
+  glGenTextures(1, &mirroredTex);
+  glBindTexture(GL_TEXTURE_2D, mirroredTex);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, State::screenWidth_, State::screenHeight_,
+      0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  // attach the texture to the framebuffer.
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mirroredTex, 0);
+
+  unsigned int mirrorRbo;
+  glGenRenderbuffers(1, &mirrorRbo);
+  glBindRenderbuffer(GL_RENDERBUFFER, mirrorRbo); 
+  glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, State::screenWidth_, State::screenHeight_);  
+  //glBindRenderbuffer(GL_RENDERBUFFER, 0);
+  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, mirrorRbo);  
+
+  if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 
@@ -96,30 +132,7 @@ void Scene::drawScene(float deltaTime){
   deltaTime_ = deltaTime;
   frameCounter_++;
 
-
-  glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-  glEnable(GL_DEPTH_TEST);
-
-  glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
   physicsEngine_->updateWorldPhysics(deltaTime_);
-
-  // definition of matrices:
-  if(State::perspective_){
-    projectionMatrix_ = glm::perspective(glm::radians(State::fov_),
-          State::screenWidth_ / State::screenHeight_, State::nearPlane_, State::farPlane_);
-  }
-  else{
-    projectionMatrix_ = glm::ortho(-3.0, 3.0, -3.0, 3.0, 1.0, 100.0);
-  }
-
-
-  viewMatrix_ = camera_.lookAt();
-  modelMatrix_ = glm::mat4(1.0f);
-  mvp_ = projectionMatrix_ * viewMatrix_ * modelMatrix_;
-  
-
   if(State::picking_){
     GLdouble xpos, ypos;
     glfwGetCursorPos(window_, &xpos, &ypos);
@@ -138,13 +151,79 @@ void Scene::drawScene(float deltaTime){
     hasPicked_ = false;
   }
 
+
+  /*
+  * First pass for mirror texture * 
+  glBindFramebuffer(GL_FRAMEBUFFER, mirrorFbo);  
+  glEnable(GL_DEPTH_TEST);
+
+  glClearColor(0.1f, 0.1f, 0.1f, 0.1f);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  
+  modelMatrix_ = glm::mat4(1.0f);
+  camera_.setYaw(camera_.getYaw() + 180.0f);
+  camera_.setPitch(camera_.getPitch() + 180.0f);
+  camera_.updateOrientation(0, 0, false);
+  viewMatrix_ = camera_.lookAt();
+  camera_.setYaw(camera_.getYaw() - 180.0f);
+  camera_.setPitch(camera_.getPitch() - 180.0f);
+  camera_.updateOrientation(0, 0, false);
+  // definition of matrices:
+  if(State::perspective_){
+    projectionMatrix_ = glm::perspective(glm::radians(State::fov_),
+          State::screenWidth_ / State::screenHeight_, State::nearPlane_, State::farPlane_);
+  }
+  else{
+    projectionMatrix_ = glm::ortho(-3.0, 3.0, -3.0, 3.0, 1.0, 100.0);
+  }
+  drawEntities();
+  drawLights();
+  drawTerrain();
+  */
+
+  //viewMatrix_ = camera_.lookAt();
+  modelMatrix_ = glm::mat4(1.0f);
+  mvp_ = projectionMatrix_ * viewMatrix_ * modelMatrix_;
+
+
+  /* Draw normal scene */
+  glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+  glEnable(GL_DEPTH_TEST);
+
+  glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+  // definition of matrices:
+  if(State::perspective_){
+    projectionMatrix_ = glm::perspective(glm::radians(State::fov_),
+          State::screenWidth_ / State::screenHeight_, State::nearPlane_, State::farPlane_);
+  }
+  else{
+    projectionMatrix_ = glm::ortho(-3.0, 3.0, -3.0, 3.0, 1.0, 100.0);
+  }
+
+
+  viewMatrix_ = camera_.lookAt();
+  modelMatrix_ = glm::mat4(1.0f);
+  mvp_ = projectionMatrix_ * viewMatrix_ * modelMatrix_;
+  
+
   drawEntities();
   drawLights();
   drawTerrain();
 
+  /* drawMirror
+  glDisable(GL_DEPTH_TEST);
+  sm_.program("mainShader")->useProgram();
+  glBindVertexArray(mirrorVAO);
+  glBindTexture(GL_TEXTURE_2D, mirroredTex);
+  glDrawArrays(GL_TRIANGLES, 0, 6);
+  */    
+
   // creates a new model (theier) to draw every 10000 frames.
   // and a new light
-  if(frameCounter_ > 250){
+  if(frameCounter_ > 50){
     models_.push_back(Model("container", "mainShader", sm_.program("mainShader"),
           randomVec3(-20, 20, glm::vec3(1, 0, 1))));
     physicsEngine_->addObject(&models_.back(), COLLISION_SHAPES::CUBE, 0.5);
@@ -173,6 +252,7 @@ void Scene::drawScene(float deltaTime){
   glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT);
   sm_.program("screenShader")->useProgram();
+  sm_.program("screenShader")->setUniform("postProcessingEffect", (unsigned int)State::postProcessingEffect_);
   glBindVertexArray(quadVAO); 
   glBindTexture(GL_TEXTURE_2D, texture);
   glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -302,6 +382,14 @@ btVector3 Scene::getRayTo(int x, int y){
 //
 // TODO Shaders to highlight picked object
 // TODO Terrain not interfering with picking 
+
+// TODO Mirror rendering using framebuffers
+
+// TODO Time handling, events with time instead of number of frames
+// TODO reports work with time instead of n of frames too.
+//
+// TODO Search for more cool kernel effects
+// TODO Cubemaps for skyboxes
 
 // TODO More usable Terrain class
 // TODO Create a mesh from Chunk?

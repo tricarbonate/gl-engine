@@ -4,6 +4,14 @@
 #include "Singleton.h"
 #include "glm/common.hpp" 
 
+enum Effect {
+  NO_EFFECT = 0,
+  HDR = 1,
+  COLOR_INVERSION = 2,
+  GRAY_SCALE = 3,
+  KERNEL_EFFECT = 4
+};
+
 class State : 
   public Singleton<State>
 {
@@ -34,6 +42,7 @@ class State :
     // OpenGL render options
     static bool useHDR_;
     static bool useGammaCorrection_;
+    static Effect postProcessingEffect_;
 
   private:
     State();

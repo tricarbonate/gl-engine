@@ -82,7 +82,7 @@ int main(){
 
       ImGui::End();
       ImGui::Begin("Report Window");
-      ImGui::Text(report(DELTA_TIME, 200).c_str());
+      ImGui::Text(report(DELTA_TIME, 20).c_str());
       ImGui::End();
 
       ImGui::Render();

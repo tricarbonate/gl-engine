@@ -58,6 +58,14 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         State::useGammaCorrection_ = !State::useGammaCorrection_;
     }
 
+    if(key == GLFW_KEY_P && action == GLFW_PRESS){
+        State::postProcessingEffect_ = static_cast<Effect>(static_cast<int>(State::postProcessingEffect_) + 1);
+        if(static_cast<int>(State::postProcessingEffect_) == 5){
+            
+            State::postProcessingEffect_ = static_cast<Effect>(static_cast<int>(0));
+        }
+    }
+
     if(key == GLFW_KEY_C && action == GLFW_PRESS){
         if(State::cursorDisabled_){
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);

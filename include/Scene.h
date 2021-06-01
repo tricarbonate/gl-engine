@@ -69,8 +69,9 @@ class Scene{
     /* */ 
     int frameCounter_ = 0;
 
-    GLuint texture;
-    GLuint fbo, quadVAO, quadVBO;
+    GLuint texture, mirroredTex;
+    GLuint fbo, mirrorFbo, mirrorVAO, mirrorVBO, quadVAO, quadVBO;
+    GLuint colorBuffers[2];
 };
 
 

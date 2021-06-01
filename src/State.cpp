@@ -22,3 +22,5 @@ float State::screenHeight_ = 1200;
 
 bool State::useHDR_ = true;
 bool State::useGammaCorrection_ = false;
+Effect State::postProcessingEffect_ = NO_EFFECT;
+

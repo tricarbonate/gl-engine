@@ -42,7 +42,7 @@ void Model::updatePosition(btTransform trans){
   orientation_.g = angles[1];
   orientation_.b = angles[2];
 
-  body_->setWorldTransform(trans);
+  //body_->setWorldTransform(trans);
 }
 
 

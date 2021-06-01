@@ -24,8 +24,13 @@ class Camera{
     glm::vec3 getRight() { return right_; }
     glm::vec3 getUp() { return up_; }
 
+    double getYaw() { return yaw_; }
+    double getPitch() { return pitch_; }
+
     // setters
     void setPos(glm::vec3 pos) {pos_ = pos;}
+    void setYaw(double yaw) { yaw_ = yaw; } 
+    void setPitch(double pitch) { pitch_ = pitch; }
 
     void goForward(float deltaTime);
     void goBackward(float deltaTime);
@@ -34,7 +39,7 @@ class Camera{
     void goUpward(float deltaTime);
     void goDownward(float deltaTime);
 
-    void updateOrientation(double xpos, double ypos);
+    void updateOrientation(double xpos, double ypos, bool constrainPitch = true);
 
   private:
 
