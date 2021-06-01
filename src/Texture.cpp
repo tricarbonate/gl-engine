@@ -1,6 +1,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 
-#include "../include/stb_image.h"
+#include "stb_image.h"
 #include "../include/Texture.h" 
 
 Texture::Texture(const char* textureLoc, GLint internalFormat):

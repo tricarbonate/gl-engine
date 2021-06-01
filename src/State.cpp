@@ -19,3 +19,6 @@ float State::tanFov_ = tan(0.5 * fov_);
 
 float State::screenWidth_ = 1600;
 float State::screenHeight_ = 1200;
+
+bool State::useHDR_ = true;
+bool State::useGammaCorrection_ = false;

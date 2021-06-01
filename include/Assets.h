@@ -5,6 +5,9 @@
 #include "Texture.h"
 #include "Singleton.h"
 #include "DataStructures.h"
+#include "includes.h"
+#include "commonValues.hpp"
+#include "DataFormat.h"
 
 #include <unordered_map>
 #include <string>
@@ -29,6 +32,8 @@ class Assets : public Singleton<Assets>
 
     //Assets only create a ShaderSchema list that the shader manager uses
     static std::vector<ShaderSchema> shaders;
+
+    static void defineAssets();
 
   private:
     Assets();

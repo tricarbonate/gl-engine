@@ -36,8 +36,8 @@ struct DirLight{
 };
 
 uniform PointLight pointLights[NR_POINT_LIGHTS];
-uniform int pointLightCount;
 uniform DirLight dirLight;
+uniform int pointLightCount;
 uniform vec3 viewPos;
 
 vec3 calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);

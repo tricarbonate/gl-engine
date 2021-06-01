@@ -2,7 +2,7 @@
 EXEC= app
 
 GLFLAGS= -lglfw -lGL -lm -lXrandr -lXi -lX11 -lXxf86vm -lpthread -lGLEW 
-BULLET_PHYSICS_FLAGS= -lBulletSoftBody -lBulletDynamics -lBulletCollision -lLinearMath -I/usr/include/bullet/ -I/.../bullet-2.82-r2704/Demos/OpenGL/ -I/~/Documents/tricarbonate/gl-engine/src/imgui
+BULLET_PHYSICS_FLAGS= -lBulletSoftBody -lBulletDynamics -lBulletCollision -lLinearMath -I/usr/include/bullet/ -I/.../bullet-2.82-r2704/Demos/OpenGL/ -I/~/Documents/tricarbonate/gl-engine/src/imgui -I/~/Documents/tricarbonate/gl-engine/src/stb_image
 
 # Build, bin and install directories ()
 BUILD_DIR_ROOT= build
@@ -13,12 +13,11 @@ INSTALL_DIR := ./install
 
 # Sources
 SRC_DIR = src
-IMGUI_DIR = libs/imgui
 SRCS := $(sort $(shell find  $(SRC_DIR) -name '*.cpp'))
 
 # Includes
 INCLUDE_DIR = include
-INCLUDES := -I$(INCLUDES_DIR) -I$(SRC_DIR)/imgui
+INCLUDES := -I$(INCLUDES_DIR) -I$(SRC_DIR)/imgui -I$(SRC_DIR)/stb_image 
 
 LIBS_DIR = libs
 LIBS := -I$(LIBS_DIR)
@@ -33,7 +32,7 @@ CXXFLAGS = -std=c++17
 WARNINGS = -Wall -Wpedantic -Wextra #-Wconversion
 
 # Linker flags
-LDFLAGS= -I/src/imgui -I/libs/stb_image
+LDFLAGS= -I/src/imgui -I/src/stb_image
 
 # Libraries to link
 LDLLIBS=

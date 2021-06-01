@@ -30,7 +30,7 @@ class Mesh
     Material& getMaterial() { return material_; }
 
     const std::vector<Vertex>& getVertices() const {return vertices_;}
-    GLuint getVAO() const { return vao_; }
+    GLuint& getVAO() { return vao_; }
 
     btScalar* getVerticesCoordinates();
     unsigned int getNumVertices() { return vertices_.size(); }

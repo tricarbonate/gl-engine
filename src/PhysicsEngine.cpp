@@ -116,6 +116,9 @@ bool PhysicsEngine::pickBody(const btVector3& rayFromWorld, const btVector3& ray
       p2p->m_setting.m_impulseClamp = mousePickClamping;
       //very weak constraint for picking
       p2p->m_setting.m_tau = 0.001f;
+
+      // adds shader effect for picked object :
+      corels_[pickedBody_]->getShaderProgram().second->setUniform("picked", (unsigned int)1);
       }
     }
 
@@ -123,7 +126,8 @@ bool PhysicsEngine::pickBody(const btVector3& rayFromWorld, const btVector3& ray
     oldPickingPos_ = rayToWorld;
     hitPos_ = pickPos;
     oldPickingDist_ = (pickPos - rayFromWorld).length();
-    std::cout << "HIT" << std::endl;
+
+
     return true;
     //add p2p
   }
@@ -153,6 +157,10 @@ bool PhysicsEngine::movePickedBody(const btVector3& rayFromWorld, const btVector
 }
 
 void PhysicsEngine::removePickingConstraint(){
+  
+  // removes shader effect for picked object:
+  //corels_[pickedBody_]->getShaderProgram().second->setUniform("picked", (unsigned int)0);
+  
   if(pickedConstraint_){
     pickedBody_->forceActivationState(savedState_);
     pickedBody_->activate();

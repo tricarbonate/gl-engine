@@ -16,12 +16,17 @@
 #include <glm/vec3.hpp>
 
 #include "State.h"
+#include "Assets.h"
+#include "includes.h"
+#include "commonValues.hpp"
+#include "DataFormat.h"
 
 int failed(std::string message);
 
 float getDeltaTime(float &lastFrame);
 
 void printStateReport(double deltaTime, int nFrame);
+std::string report(double deltaTime, int nFrames);
 
 GLFWwindow* initializeWindow(const unsigned int windowHeight, const unsigned int windowWidth);
 
@@ -30,6 +35,6 @@ int initializeGlew(GLFWwindow *window);
 int initializeGlfw();
 
 // function that generates a random vec3 with values in between min and max
-glm::vec3 randomVec3(double min, double max);
+glm::vec3 randomVec3(double min, double max, glm::vec3 xyz = glm::vec3(1, 1, 1));
 
 #endif // UTILS_HPP

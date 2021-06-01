@@ -17,7 +17,6 @@ void printMSperFrame(double deltaTime){
 }
 
 void printStateReport(double deltaTime, int nFrames){
-  std::cout << "--REPORT--" << std::endl;
   /* PRINTS ms/frames */
   static double deltaCount;
   static double frameCount;
@@ -25,13 +24,35 @@ void printStateReport(double deltaTime, int nFrames){
   frameCount++;
   // prints every nframes frames
   if(frameCount >= nFrames){
+    std::cout << "--REPORT--" << std::endl;
     std::cout << double(deltaCount / nFrames) * 1000 << " ms/frame" << std::endl;
     std::string str = State::picking_ == true ? "YES" : "NO";
+    std::string flatShading = State::terrainFlatShading_ == true ? "YES" : "NO";
     std::cout << "Currently picking : " << str << std::endl; 
+    std::cout << "Using Flat Shading : " << flatShading << std::endl;
+    deltaCount = 0;
+    frameCount = 0;
+    std::cout << std::endl;
+  }
+}
+
+std::string report(double deltaTime, int nFrames){
+  static std::string finalStr = "";
+  static double deltaCount;
+  static int frameCount;
+  frameCount++;
+  deltaCount += deltaTime;
+  if(frameCount >= nFrames){
+    finalStr = "";
+    finalStr += std::to_string(double(deltaCount / nFrames) * 1000) + " ms/frame\n";
+    std::string isPicking = State::picking_ == true ? "YES" : "NO";
+    finalStr += "Currently picking : " + isPicking + "\n";
     deltaCount = 0;
     frameCount = 0;
   }
-  std::cout << std::endl;
+  
+
+  return finalStr;
 }
 
 GLFWwindow* initializeWindow(const unsigned int windowHeight, const unsigned int windowWidth){ 
@@ -76,14 +97,24 @@ int initializeGlfw(){
   return 0;
 }
 
-glm::vec3 randomVec3(double min, double max){
+glm::vec3 randomVec3(double min, double max, glm::vec3 xyz){
   std::random_device rd;
   std::default_random_engine eng(rd());
   std::uniform_real_distribution<double> distr(min, max);
 
-  double x = distr(eng);
-  double y = distr(eng);
-  double z = distr(eng);
+  double x, y, z;
+  if(xyz.r == 1)
+    x = distr(eng);
+  else
+    x = 1;
+  if(xyz.y == 1)
+    y = distr(eng);
+  else
+    y = 1;
+  if(xyz.b == 1)
+    z = distr(eng);
+  else
+    z = 1;
   return glm::vec3(x, y, z);
 }
 

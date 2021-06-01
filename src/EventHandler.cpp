@@ -54,6 +54,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         State::fullScreenMode_ = !State::fullScreenMode_;
     }
 
+    if(key == GLFW_KEY_G && action == GLFW_PRESS){
+        State::useGammaCorrection_ = !State::useGammaCorrection_;
+    }
+
     if(key == GLFW_KEY_C && action == GLFW_PRESS){
         if(State::cursorDisabled_){
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);

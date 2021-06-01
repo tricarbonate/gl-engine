@@ -5,6 +5,8 @@
 
 #include <iostream>
 
+#include "State.h"
+
 class Texture{
   public:
     Texture(const char* textureLoc, GLint internalFormat = GL_RGBA);

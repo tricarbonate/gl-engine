@@ -21,46 +21,6 @@ static float LAST_FRAME = 0.0f;
 
 #define STRING(num) #num
 
-/* ASSETS DEFINITION */
-void defineAssets(){
-  Assets::textures["container"] = Texture(CONTAINER2_TEX_LOC);
-  Assets::textures["container_specular"] = Texture(CONTAINER2_SPEC_LOC);
-  Assets::textures["grass"] = Texture(GRASS_TEX_LOC, GL_RGB);
-
-  Assets::materials["container"] = {&Assets::textures.at("container"),
-    &Assets::textures.at("container_specular"), nullptr, nullptr, 32.0f};
-  Assets::materials["grass"] = {&Assets::textures.at("grass"),
-    &Assets::textures.at("container_specular"), nullptr, nullptr, 32.0f};
-
-  Assets::meshes["container"] = Mesh(DataFormat::getVerticesFromArray(vertices, 36), 
-      Assets::materials.at("container"), std::vector<GLuint>());
-
-  Assets::meshes["instancedContainer"] = Mesh(DataFormat::getVerticesFromArray(vertices, 36),
-      Assets::materials.at("container"), std::vector<GLuint>());
-
-  Assets::meshes["point_light"] = Mesh();
-  Assets::meshes["point_light"].createMesh(lightVertices, indices, 48, 36);
-
-
-  Assets::meshes["theiere"] = 
-    Mesh(DataFormat::getVerticesFromArrayAndNormals(gTheiereSommets, gTheiereNormales, 530),
-      Assets::materials.at("container"),
-      std::vector<GLuint>(std::begin(gTheiereConnec), std::end(gTheiereConnec)));
-
-  Assets::meshes["grass"] = Mesh(DataFormat::getVerticesFromArray(groundVertices, 6),
-      Assets::materials.at("grass"), std::vector<GLuint>());
-
-  Assets::shaders.push_back({"mainShader", {
-      {SHADERPROGRAM_VERT_LOC, GL_VERTEX_SHADER}, {SHADERPROGRAM_FRAG_LOC, GL_FRAGMENT_SHADER}}});
-  Assets::shaders.push_back({"lightingShader",{
-      {LIGHTINGSHADER_VERT_LOC, GL_VERTEX_SHADER}, {LIGHTINGSHADER_FRAG_LOC, GL_FRAGMENT_SHADER}
-      }});
-  Assets::shaders.push_back({"terrain_flatshader", {
-      {TERRAIN_FLATSHADER_VERT_LOC, GL_VERTEX_SHADER}, {TERRAIN_FLATSHADER_FRAG_LOC, GL_FRAGMENT_SHADER}
-      }});
-}
-
-
 int main(){
 
   /* WINDOW AND SCENE INITIALIZATION */
@@ -73,7 +33,7 @@ int main(){
   PhysicsEngine physicsEngine;
   initializeGlew(window);
 
-  defineAssets();
+  Assets::defineAssets();
   Scene scene = Scene(window, &physicsEngine);
   scene.setupScene();
   
@@ -87,15 +47,9 @@ int main(){
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
   ImGuiIO &io = ImGui::GetIO();
-  // Setup Platform/Renderer bindings
-  //ImGui_ImplGlfw_InitForOpenGL(window, true);
-  //ImGui_ImplOpenGL3_Init();
   // Setup Dear ImGui style
   ImGui::StyleColorsDark();
-
-
   ImGui_ImplGlfw_InitForOpenGL(window, true);
-  //ImGui_ImplGlfw_InitForOpenGL(window, true);
   ImGui_ImplOpenGL3_Init(NULL);
 
   /* MAIN LOOP */
@@ -104,14 +58,9 @@ int main(){
       DELTA_TIME = getDeltaTime(LAST_FRAME);
 
       eventHandler.handleEvents(DELTA_TIME);
-      if(State::fullScreenMode_){
-        glfwSetWindowSize(window, 1920, 1080);
-        glViewport(0, 0, 1920, 1080);
-      }
-      else{
-        glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-        glfwSetWindowSize(window, WINDOW_WIDTH, WINDOW_HEIGHT);
-      }
+
+      glfwSetWindowSize(window, State::screenWidth_, State::screenHeight_);
+      glViewport(0, 0, State::screenWidth_, State::screenHeight_);
 
       // feed inputs to dear imgui, start new frame
       ImGui_ImplOpenGL3_NewFrame();
@@ -125,9 +74,15 @@ int main(){
       // render your GUI
       ImGui::Begin("Demo window");
       if(pickedModel!=nullptr){
-        std::string str = std::to_string(pickedModel->getPosition().g);
-        ImGui::Button(str.c_str());
+        std::string str = "X: " + std::to_string(pickedModel->getPosition().r) + " _Y: " +
+          std::to_string(pickedModel->getPosition().g) + " _Z: " +
+          std::to_string(pickedModel->getPosition().b);
+        ImGui::Text(str.c_str());
       }
+
+      ImGui::End();
+      ImGui::Begin("Report Window");
+      ImGui::Text(report(DELTA_TIME, 200).c_str());
       ImGui::End();
 
       ImGui::Render();
@@ -136,7 +91,7 @@ int main(){
       glfwSwapBuffers(window);
       glfwPollEvents();
 
-    }while(glfwWindowShouldClose(window) == 0 &&
+    } while(glfwWindowShouldClose(window) == 0 &&
            glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS);
 
   return 0;

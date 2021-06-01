@@ -9,6 +9,7 @@
 #include <vector>
 #include <string>
 
+
 /* 
  * This struct is used for Shader Programs initializations
  */
@@ -21,11 +22,13 @@ class ShaderManager {
     //default constructor
     ShaderManager(); 
 
-    ShaderManager(std::vector<ShaderSchema> shaders);
+    ShaderManager(const std::vector<ShaderSchema>& shaders);
     
     ~ShaderManager();
 
     void bindToModels(std::vector<Model>& models);
+    void bindToModel(Model& model);
+    unsigned int getNumberOfModel(std::string shaderName);
 
     auto& getShaders() { return shaders_; }
     auto at(std::string name) { return shaders_.at(name); }

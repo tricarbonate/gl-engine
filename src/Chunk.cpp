@@ -176,7 +176,7 @@ std::vector<float> Chunk::generateColor(const std::vector<float> &vertices, int 
     std::vector<float> colors;
     glm::vec3 color = glm::vec3(0.1f, 8.0f, 0.1f);
     for(int i = 1; i < vertices.size(); i+=3){
-        color = glm::vec3(vertices[i] / 2, cos(vertices[i]) / 10, vertices[i] / 2);
+        color = glm::vec3(0.5 + vertices[i] / 2, 0.8 + cos(vertices[i]) / 10, vertices[i] / 2);
         color /= 10.0;
         colors.push_back(color.r);
         colors.push_back(color.g);

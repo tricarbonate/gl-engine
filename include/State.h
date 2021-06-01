@@ -31,6 +31,10 @@ class State :
     static float screenWidth_;
     static float screenHeight_;
 
+    // OpenGL render options
+    static bool useHDR_;
+    static bool useGammaCorrection_;
+
   private:
     State();
     ~State();

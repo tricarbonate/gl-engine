@@ -36,3 +36,11 @@ void Light::setDiffuseColor(float r, float g, float b){
 void Light::setSpecularColor(float r, float g, float b){
   specularColor_ = glm::vec3(r, g, b);
 }
+
+void Light::setIntensity(double intensity){
+  intensity_ = intensity;
+
+  //updates diffuseColor_ and specularColor_ :
+  diffuseColor_ *= intensity_;
+  specularColor_ *= intensity_ / 2;
+}

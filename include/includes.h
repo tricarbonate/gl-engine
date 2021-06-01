@@ -13,6 +13,8 @@
 // shader programs locations
 #define SHADERPROGRAM_VERT_LOC "shaders/models/default-vert.glsl"
 #define SHADERPROGRAM_FRAG_LOC "shaders/models/default-frag.glsl"
+#define SCREEN_SHADER_VERT_LOC "shaders/models/framebuffer-vert.glsl"
+#define SCREEN_SHADER_FRAG_LOC "shaders/models/framebuffer-frag.glsl"
 
 // shader programs for lights
 #define LIGHTINGSHADER_VERT_LOC "shaders/lights/light-vert.glsl"
@@ -23,5 +25,6 @@
 #define TERRAIN_FLATSHADER_FRAG_LOC "shaders/terrain/flat-terrain-frag.glsl"
 #define TERRAIN_FLATSHADER_TESSC_LOC "shaders/terrain/flat-terrain-tessc.glsl"
 #define TERRAIN_FLATSHADER_TESSE_LOC "shaders/terrain/flat-terrain-tesse.glsl"
+
 
 #endif // __INCLUDES_H__

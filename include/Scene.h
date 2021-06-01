@@ -20,6 +20,8 @@
 #include <map>
 #include <unordered_map>
 
+#include <GL/glew.h>
+
 /*
  * The scene contains all the elements
  * to render */
@@ -66,6 +68,9 @@ class Scene{
 
     /* */ 
     int frameCounter_ = 0;
+
+    GLuint texture;
+    GLuint fbo, quadVAO, quadVBO;
 };
 
 

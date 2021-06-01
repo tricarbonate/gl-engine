@@ -23,17 +23,17 @@ void Scene::setupScene(){
   }
   
   
-  /*theire model 
+  //theire model 
   models_.push_back(Model("theiere", "mainShader", sm_.program("mainShader"),
         glm::vec3(4.0f, 10.0f, 0.0f)));
-  physicsEngine_.addObject(&models_.back(), COLLISION_SHAPES::CONVEX_HULL); 
-  */
+  physicsEngine_->addObject(&models_.back(), COLLISION_SHAPES::CONVEX_HULL); 
+  
 
   physicsEngine_->addTerrain(&terrain_);
 
   /* Initialization of lights */
   lights_ = {
-    DirectionalLight(glm::vec3(0.2f, 0.2f, 0.2f),
+    DirectionalLight(glm::vec3(0.4f, 0.2f, 0.2f),
         glm::vec3(0.0f, -1.0f, 0.0f)),
     PointLight(glm::vec3(0.8f, 0.8f, 0.8f),
         glm::vec3(0.0f, 2.0f, 0.0f), glm::vec3(), "container", sm_.program("lightingShader")),
@@ -49,9 +49,45 @@ void Scene::setupScene(){
   sm_.bindToModels(models_);
   for(size_t i = 1; i < lights_.size(); i++){
     //Oversized collision shape to facilitate light picking
-    physicsEngine_->addObject(&lights_[i], COLLISION_SHAPES::CUBE, 0.5);
+    physicsEngine_->addObject(&lights_[i], COLLISION_SHAPES::CUBE, 1);
   }
-  std::cout << models_.size() << std::endl;
+
+
+
+  /* FRAME BUFFER VAO */
+  glGenVertexArrays(1, &quadVAO);
+  glGenBuffers(1, &quadVBO);
+  glBindVertexArray(quadVAO);
+  glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+  glEnableVertexAttribArray(0);
+  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+  glEnableVertexAttribArray(1);
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+
+  /* FRAME BUFFER CREATION */
+  glGenFramebuffers(1, &fbo); 
+  glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+  glGenTextures(1, &texture);
+  glBindTexture(GL_TEXTURE_2D, texture);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, State::screenWidth_, State::screenHeight_,
+      0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  // attach the texture to the framebuffer.
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+
+  unsigned int rbo;
+  glGenRenderbuffers(1, &rbo);
+  glBindRenderbuffer(GL_RENDERBUFFER, rbo); 
+  glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, State::screenWidth_, State::screenHeight_);  
+  //glBindRenderbuffer(GL_RENDERBUFFER, 0);
+  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);  
+
+  if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 
@@ -60,6 +96,11 @@ void Scene::drawScene(float deltaTime){
   deltaTime_ = deltaTime;
   frameCounter_++;
 
+
+  glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+  glEnable(GL_DEPTH_TEST);
+
+  glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   physicsEngine_->updateWorldPhysics(deltaTime_);
@@ -77,24 +118,19 @@ void Scene::drawScene(float deltaTime){
   viewMatrix_ = camera_.lookAt();
   modelMatrix_ = glm::mat4(1.0f);
   mvp_ = projectionMatrix_ * viewMatrix_ * modelMatrix_;
-
-  drawEntities();
-  drawLights();
-  drawTerrain();
-
   
+
   if(State::picking_){
     GLdouble xpos, ypos;
     glfwGetCursorPos(window_, &xpos, &ypos);
     btVector3 rayTo = getRayTo(int(xpos), int(ypos));
     glm::vec3 vec = camera_.getPos();
     btVector3 rayFrom = btVector3(vec.r, vec.g, vec.b);
-    Model* pickedModel = nullptr;
     if(!hasPicked_){
       hasPicked_ = physicsEngine_->pickBody(rayFrom, rayTo);
     }
     else{
-      //physicsEngine_.movePickedBody(rayFrom, rayTo);
+      physicsEngine_->movePickedBody(rayFrom, rayTo);
     }
   }
   else{
@@ -102,38 +138,44 @@ void Scene::drawScene(float deltaTime){
     hasPicked_ = false;
   }
 
+  drawEntities();
+  drawLights();
+  drawTerrain();
+
   // creates a new model (theier) to draw every 10000 frames.
   // and a new light
-  if(frameCounter_ > 200){
+  if(frameCounter_ > 250){
     models_.push_back(Model("container", "mainShader", sm_.program("mainShader"),
-          randomVec3(1, 10)));
+          randomVec3(-20, 20, glm::vec3(1, 0, 1))));
     physicsEngine_->addObject(&models_.back(), COLLISION_SHAPES::CUBE, 0.5);
-    
-    /*
-    lights_.push_back(Light(LightType::POINT, glm::vec3(0.1f, 0.1f, 0.8f),
-        randomVec3(-10, 10), glm::vec3(), "container",
+     
+   
+    lights_.push_back(Light(LightType::POINT, randomVec3(0, 0.8),
+        randomVec3(-20, 20, glm::vec3(1, 0, 1)), glm::vec3(), "container",
         sm_.program("lightingShader")));
-    physicsEngine_.addObject(&lights_.back(), COLLISION_SHAPES::CUBE, 0.05);
-    */
-
-
-    // need to rebind shader to models (extremelly inneficient)
-    sm_.bindToModels(models_);
+    physicsEngine_->addObject(&lights_.back(), COLLISION_SHAPES::CUBE, 1);
+    
+    sm_.bindToModel(models_.back());
 
     frameCounter_ = 0;
   }
 
-  /*
-  if(frameCounter_ > 100){
+  if(State::useGammaCorrection_)
+    glEnable(GL_FRAMEBUFFER_SRGB);
+  else
+    glDisable(GL_FRAMEBUFFER_SRGB);
 
-    for (size_t i = 0; i < models_.size(); i++){
-      btTransform trans;
-      glm::vec3 vec = models_[i].getPosition() + randomVec3(0.001, 0.01);
-      trans.setOrigin(btVector3(vec.r, vec.g, vec.b));
-      models_[i].updatePosition(trans);
-    }
-  }
-  */
+
+  //after everything is drawn, draw a quad in the default framebuffer, with a texture being the content
+  //of the previous framebuffer
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  glDisable(GL_DEPTH_TEST);
+  glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+  glClear(GL_COLOR_BUFFER_BIT);
+  sm_.program("screenShader")->useProgram();
+  glBindVertexArray(quadVAO); 
+  glBindTexture(GL_TEXTURE_2D, texture);
+  glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
 
@@ -173,6 +215,13 @@ void Scene::drawEntities(){
       modelMatrix_ = glm::rotate(modelMatrix_, it->second.second[i]->getOrientation().g, glm::vec3(0, 1, 0));
       modelMatrix_ = glm::rotate(modelMatrix_, it->second.second[i]->getOrientation().b, glm::vec3(0, 0, 1));
 
+      if(physicsEngine_->getPickedModel() == it->second.second[i]){
+        it->second.first.setUniform("picked", (unsigned int)1);
+      }
+      else{
+        it->second.first.setUniform("picked", (unsigned int)0);
+      }
+
       mvp_ = projectionMatrix_ * viewMatrix_ * modelMatrix_;
       it->second.first.setUniform("mvp", mvp_);
       it->second.first.setUniform("model", modelMatrix_);
@@ -195,6 +244,7 @@ void Scene::addModel(Model model){
   physicsEngine_->addObject(&models_.back());
   sm_.bindToModels(models_);  
 }
+
 
 btVector3 Scene::getRayTo(int x, int y){
   btVector3 rayFrom, rayDir;
@@ -244,22 +294,25 @@ btVector3 Scene::getRayTo(int x, int y){
 // TODO Scene class should only contain entities initialization and drawing.
 //
 // TODO Find a serialization library
-//
-// TODO change sm_.bindToModels to accept only one new model
 
-// TODO Mouse picking (with bullet physics?)
 // TODO Should not pick the terrain
 // TODO Add a shader for picked object
 // TODO Move rayTo() function (where?)
 // TODO Controller inputs?
+//
+// TODO Shaders to highlight picked object
+// TODO Terrain not interfering with picking 
 
 // TODO More usable Terrain class
 // TODO Create a mesh from Chunk?
 // TODO Learn about Chunk creation...
 // TODO btHeightfield
 //
-// TODO Change makefile to compile .h .cpp recursively (folders)
+// TODO MESH: smarter Vao construction, with more possible data type, (automatically from data)
 //
+// TODO Gerer les warnings
+//
+// TODO Change makefile to compile .h .cpp recursively (folders)
 //
 // TODO GLSL Cleaner uniform data structures (in struct... out struct)
 // TODO Uniform Buffer Objects
@@ -281,6 +334,7 @@ btVector3 Scene::getRayTo(int x, int y){
 // - Custurm pointers...
 // - bullet physics cleanup...
 // - gl and window cleanup...
+// TODO maybe use smart pointers
 //
 // TODO Add debug functions
 //
