@@ -6,8 +6,8 @@ Mesh::Mesh()
 Mesh::Mesh(std::vector<Vertex> vertices, Material material,
         std::vector<GLuint> indices):
   vertices_(vertices),
-  material_(material),
-  indices_(indices)
+  indices_(indices),
+  material_(material)
 {
   createMesh();
 }
@@ -96,7 +96,7 @@ void Mesh::createInstanced(std::vector<glm::vec3> offsets){
 //very inefficient way to return only the coordinates 
 btScalar* Mesh::getVerticesCoordinates(){
   static std::vector<btScalar> coordinates;
-  for(int i = 0; i < vertices_.size(); i++){
+  for(size_t i = 0; i < vertices_.size(); i++){
     coordinates.push_back(btScalar(vertices_[i].position.r));
     coordinates.push_back(btScalar(vertices_[i].position.g));
     coordinates.push_back(btScalar(vertices_[i].position.b));

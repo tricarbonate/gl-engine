@@ -29,7 +29,7 @@ CPPFLAGS := -DGLEW_STATIC -MMD -MP $(INCLUDES)
 CXX = g++
 CXXFLAGS = -std=c++17
 #CXXDEFINES = -DBT_USE_DOUBLE_PRECISION
-WARNINGS = -Wall -Wpedantic -Wextra #-Wconversion
+WARNINGS = -Wall -Wpedantic -Wextra -Wno-unused-variable -Wno-unused-parameter #-Wconversion
 
 # Linker flags
 LDFLAGS= -I/src/imgui -I/src/stb_image

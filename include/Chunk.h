@@ -10,6 +10,7 @@
 
 #include "Perlin.h"
 
+
 //noise params
 const int octaves = 5;
 const float meshHeight = 0;  // Vertical scaling
@@ -39,7 +40,7 @@ private:
     std::vector<float> generateNoiseMap(int xOffset, int zOffset);
     std::vector<float> generateVertices(const std::vector<float> &noiseMap);
     std::vector<float> generateNormals(const std::vector<GLuint> &indices, const std::vector<float> &vertices);
-    std::vector<float> generateColor(const std::vector<float> &vertices, int xOffset, int zOffset);
+    std::vector<float> generateColor(const std::vector<float> &vertices);
 
     std::vector<GLuint> indices_;
     std::vector<float> noiseMap_;
@@ -48,6 +49,7 @@ private:
     std::vector<float> colors_;
 
     GLuint vao_, ebo_, vbo_[3];
+
 };
 
 #endif // __CHUNK_H__

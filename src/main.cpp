@@ -67,6 +67,7 @@ int main(){
       ImGui_ImplGlfw_NewFrame();
       ImGui::NewFrame();
 
+
       //printStateReport(DELTA_TIME, 200);
       scene.drawScene(DELTA_TIME);
       Model* pickedModel = physicsEngine.getPickedModel();
@@ -82,15 +83,15 @@ int main(){
 
       ImGui::End();
       ImGui::Begin("Report Window");
-      ImGui::Text(report(DELTA_TIME, 20).c_str());
+      ImGui::Text(report(window, DELTA_TIME, 20).c_str());
       ImGui::End();
 
       ImGui::Render();
       ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
+
       glfwSwapBuffers(window);
       glfwPollEvents();
-
     } while(glfwWindowShouldClose(window) == 0 &&
            glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS);
 

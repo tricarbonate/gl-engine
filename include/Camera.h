@@ -1,11 +1,14 @@
 #ifndef __CAMERA_H__
 #define __CAMERA_H__
 
+#include <iostream>
 
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
 //#include <GLFW/glfw3.h>
+//
+#include "State.h"
 
 class Camera{
 
@@ -31,6 +34,7 @@ class Camera{
     void setPos(glm::vec3 pos) {pos_ = pos;}
     void setYaw(double yaw) { yaw_ = yaw; } 
     void setPitch(double pitch) { pitch_ = pitch; }
+    void setFirstMouse(bool firstMouse) { firstMouse_ = firstMouse; }
 
     void goForward(float deltaTime);
     void goBackward(float deltaTime);
@@ -40,6 +44,7 @@ class Camera{
     void goDownward(float deltaTime);
 
     void updateOrientation(double xpos, double ypos, bool constrainPitch = true);
+    void resetLastMousePos();
 
   private:
 
@@ -50,14 +55,16 @@ class Camera{
     glm::vec3 right_;
     glm::vec3 up_;
 
-    bool firstMouse = true;
-    double lastX = 400, lastY = 300;
-
-    const float speed_;
-
     double yaw_;
     double pitch_;
 
+    bool firstMouse_;
+    double lastX_, lastY_;
+
+    const float speed_;
 };
+
+//void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+//void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 
 #endif // __CAMERA_H__ 

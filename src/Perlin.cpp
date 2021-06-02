@@ -1,6 +1,6 @@
 #include "../include/Perlin.h"
 
-double fade(double t) { return t * t * t * (t * (t * 6 - 15) + 10); };
+double fade(double t) { return t * t * t * (t * (t * 6 - 15) + 10); }
     
 double lerp(double t, double a, double b) { return a + t * (b - a); }
     
@@ -12,7 +12,7 @@ double grad(int hash, double x, double y, double z) {
 }
     
 double perlin_noise(float x, float y, std::vector<int> &p) {
-    int z = 0.5;
+    double z = 0.5;
     
     int X = (int)floor(x) & 255,                  // FIND UNIT CUBE THAT
         Y = (int)floor(y) & 255,                  // CONTAINS POINT.

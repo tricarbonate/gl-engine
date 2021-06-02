@@ -2,9 +2,9 @@
 
 Scene::Scene(GLFWwindow* window, PhysicsEngine* engine):
   models_(std::vector<Model>()),
+  window_(window),
   terrain_(Terrain()),
-  physicsEngine_(engine),
-  window_(window)
+  physicsEngine_(engine)
 {
   models_.reserve(State::nMaxModels);
   lights_.reserve(State::nMaxLights);
@@ -136,6 +136,10 @@ void Scene::drawScene(float deltaTime){
   if(State::picking_){
     GLdouble xpos, ypos;
     glfwGetCursorPos(window_, &xpos, &ypos);
+    if(State::cursorDisabled_){
+      xpos = State::screenWidth_ / 2;
+      ypos = State::screenHeight_ / 2;
+    }
     btVector3 rayTo = getRayTo(int(xpos), int(ypos));
     glm::vec3 vec = camera_.getPos();
     btVector3 rayFrom = btVector3(vec.r, vec.g, vec.b);
@@ -189,6 +193,7 @@ void Scene::drawScene(float deltaTime){
   /* Draw normal scene */
   glBindFramebuffer(GL_FRAMEBUFFER, fbo);
   glEnable(GL_DEPTH_TEST);
+  glEnable(GL_MULTISAMPLE);
 
   glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -208,6 +213,7 @@ void Scene::drawScene(float deltaTime){
   modelMatrix_ = glm::mat4(1.0f);
   mvp_ = projectionMatrix_ * viewMatrix_ * modelMatrix_;
   
+  //std::cout << camera_.getPos().x << " " << camera_.getPos().y << " " << camera_.getPos().z << std::endl;
 
   drawEntities();
   drawLights();
@@ -223,7 +229,7 @@ void Scene::drawScene(float deltaTime){
 
   // creates a new model (theier) to draw every 10000 frames.
   // and a new light
-  if(frameCounter_ > 50){
+  if(frameCounter_ > 350){
     models_.push_back(Model("container", "mainShader", sm_.program("mainShader"),
           randomVec3(-20, 20, glm::vec3(1, 0, 1))));
     physicsEngine_->addObject(&models_.back(), COLLISION_SHAPES::CUBE, 0.5);
@@ -289,6 +295,7 @@ void Scene::drawEntities(){
       // translate and rotate each model to its correct position and orientation
       // and send model and mvp to shader
       modelMatrix_ = glm::mat4(1.0f); 
+
       modelMatrix_ = glm::translate(modelMatrix_, it->second.second[i]->getPosition());
 
       modelMatrix_ = glm::rotate(modelMatrix_, it->second.second[i]->getOrientation().r, glm::vec3(1, 0, 0));
@@ -301,6 +308,15 @@ void Scene::drawEntities(){
       else{
         it->second.first.setUniform("picked", (unsigned int)0);
       }
+
+
+        //modelMatrix_ = glm::scale(modelMatrix_, glm::vec3(1, -1, 1));
+        //mvp_ = projectionMatrix_ * viewMatrix_ * modelMatrix_;
+        //it->second.first.setUniform("mvp", mvp_);
+        //it->second.first.setUniform("model", modelMatrix_);
+        //it->second.second[i]->draw();
+        //modelMatrix_ = glm::scale(modelMatrix_, glm::vec3(1, -1, 1));
+
 
       mvp_ = projectionMatrix_ * viewMatrix_ * modelMatrix_;
       it->second.first.setUniform("mvp", mvp_);
@@ -352,9 +368,12 @@ btVector3 Scene::getRayTo(int x, int y){
   btVector3 dHor = horizontal * 1.0f / State::screenWidth_;
   btVector3 dVert = vertical * 1.0f / State::screenHeight_;
   btVector3 rayTo = rayToCenter - 0.5f * horizontal + 0.5f * vertical;
-  rayTo += btScalar(x) * dHor;
-  rayTo -= btScalar(y) * dVert;
-  return rayTo;
+  if(!State::cursorDisabled_){
+
+    rayTo += btScalar(x) * dHor;
+    rayTo -= btScalar(y) * dVert;
+  }
+  return rayDir;
 }
 
 // TODO have lights move with deltaTime
@@ -394,7 +413,9 @@ btVector3 Scene::getRayTo(int x, int y){
 // TODO More usable Terrain class
 // TODO Create a mesh from Chunk?
 // TODO Learn about Chunk creation...
+
 // TODO btHeightfield
+// TODO Once heightfield are done, tesselation bezier for terrain? could be good
 //
 // TODO MESH: smarter Vao construction, with more possible data type, (automatically from data)
 //

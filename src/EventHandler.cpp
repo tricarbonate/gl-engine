@@ -13,9 +13,7 @@ EventHandler::~EventHandler(){
 
 void EventHandler::handleEvents(float deltaTime){
     handleKeys(deltaTime);
-    if(State::cursorDisabled_){
-        handleMouse();
-    }
+    handleMouse();
 }
 
 
@@ -69,13 +67,16 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     if(key == GLFW_KEY_C && action == GLFW_PRESS){
         if(State::cursorDisabled_){
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            glfwSetCursorPos(window, State::screenWidth_ / 2, State::screenHeight_ / 2);
         }
         else {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            glfwSetCursorPos(window, State::screenWidth_ / 2, State::screenHeight_ / 2);
         }
         State::cursorDisabled_ = !State::cursorDisabled_;
     }
 }
+
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods){
     if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS){
@@ -85,9 +86,13 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 
 
 void EventHandler::handleMouse(){
-    GLdouble xpos, ypos;
-    glfwGetCursorPos(window_, &xpos, &ypos);
-    camera_->updateOrientation(xpos, ypos);
+    if(State::cursorDisabled_){
+        GLdouble xpos, ypos;
+        glfwGetCursorPos(window_, &xpos, &ypos);
+        camera_->updateOrientation(xpos, ypos);
+    } else {
+        camera_->setFirstMouse(true);
+    }
 }
 
 bool EventHandler::pressed(int key){

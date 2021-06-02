@@ -14,7 +14,7 @@ void Chunk::generateMapChunk(int xOffset, int zOffset){
     noiseMap_ = generateNoiseMap(xOffset, zOffset);
     vertices_ = generateVertices(noiseMap_);
     normals_ = generateNormals(indices_, vertices_);
-    colors_ = generateColor(vertices_, xOffset, zOffset);
+    colors_ = generateColor(vertices_);
 
     glGenBuffers(3, vbo_);
     glGenBuffers(1, &ebo_);
@@ -150,10 +150,10 @@ std::vector<float> Chunk::generateNormals(const std::vector<GLuint> &indices, co
     
     // Get the vertices of each triangle in mesh
     // For each group of indices
-    for (int i = 0; i < indices.size(); i += 3) {
+    for (size_t i = 0; i < indices.size(); i += 3) {
         
         // Get the vertices (point) for each index
-        for (int j = 0; j < 3; j++) {
+        for (size_t j = 0; j < 3; j++) {
             pos = indices[i+j]*3;
             verts.push_back(glm::vec3(vertices[pos], vertices[pos+1], vertices[pos+2]));
         }
@@ -172,10 +172,10 @@ std::vector<float> Chunk::generateNormals(const std::vector<GLuint> &indices, co
     return normals;
 }
 
-std::vector<float> Chunk::generateColor(const std::vector<float> &vertices, int xOffset, int zOffset){
+std::vector<float> Chunk::generateColor(const std::vector<float> &vertices){
     std::vector<float> colors;
     glm::vec3 color = glm::vec3(0.1f, 8.0f, 0.1f);
-    for(int i = 1; i < vertices.size(); i+=3){
+    for(size_t i = 1; i < vertices.size(); i+=3){
         color = glm::vec3(0.5 + vertices[i] / 2, 0.8 + cos(vertices[i]) / 10, vertices[i] / 2);
         color /= 10.0;
         colors.push_back(color.r);

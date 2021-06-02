@@ -104,25 +104,28 @@ bool PhysicsEngine::pickBody(const btVector3& rayFromWorld, const btVector3& ray
       //other exclusions?
       if (!(body->isStaticObject() || body->isKinematicObject()))
       {
-      pickedBody_ = body;
-      savedState_ = pickedBody_->getActivationState();
-      pickedBody_->setActivationState(DISABLE_DEACTIVATION);
-      std::cout << pickPos.getX() << pickPos.getY() << pickPos.getZ() << std::endl;
-      btVector3 localPivot = body->getCenterOfMassTransform().inverse() * pickPos;
-      btPoint2PointConstraint* p2p = new btPoint2PointConstraint(*body, localPivot);
-      dynamicsWorld_->addConstraint(p2p, true);
-      pickedConstraint_ = p2p;
-      btScalar mousePickClamping = 100.f;
-      p2p->m_setting.m_impulseClamp = mousePickClamping;
-      //very weak constraint for picking
-      p2p->m_setting.m_tau = 0.001f;
+        pickedBody_ = body;
+        savedState_ = pickedBody_->getActivationState();
+        pickedBody_->setActivationState(DISABLE_DEACTIVATION);
+        std::cout << pickPos.getX() << pickPos.getY() << pickPos.getZ() << std::endl;
+        btVector3 localPivot = body->getCenterOfMassTransform().inverse() * (pickPos + btVector3(0, 5, 0));
+        btPoint2PointConstraint* p2p = new btPoint2PointConstraint(*body, localPivot);
+        dynamicsWorld_->addConstraint(p2p, true);
+        pickedConstraint_ = p2p;
+        btScalar mousePickClamping = 10000.f;
+        p2p->m_setting.m_impulseClamp = mousePickClamping;
+        //very weak constraint for picking
+        p2p->m_setting.m_tau = 0.005f;
 
-      // adds shader effect for picked object :
-      corels_[pickedBody_]->getShaderProgram().second->setUniform("picked", (unsigned int)1);
+        // adds shader effect for picked object :
+        corels_[pickedBody_]->getShaderProgram().second->setUniform("picked", (unsigned int)1);
+      }
+      else{
+        //probably picked the terrain (not sure)
+        return false;
       }
     }
 
-    //pickObject(pickPos, rayCallback.m_collisionObject);
     oldPickingPos_ = rayToWorld;
     hitPos_ = pickPos;
     oldPickingDist_ = (pickPos - rayFromWorld).length();

@@ -2262,7 +2262,6 @@ static GLuint gTheiereConnec[1024*3] =
 468, 528, 527,
 528, 468, 469,
 469, 529, 528
-    };
-
+};
 
 #endif //COMMON_VALUES_HPP

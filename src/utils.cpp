@@ -16,7 +16,7 @@ float getDeltaTime(float &lastFrame){
 void printMSperFrame(double deltaTime){
 }
 
-void printStateReport(double deltaTime, int nFrames){
+void printStateReport(GLFWwindow* window, double deltaTime, int nFrames){
   /* PRINTS ms/frames */
   static double deltaCount;
   static double frameCount;
@@ -27,16 +27,14 @@ void printStateReport(double deltaTime, int nFrames){
     std::cout << "--REPORT--" << std::endl;
     std::cout << double(deltaCount / nFrames) * 1000 << " ms/frame" << std::endl;
     std::string str = State::picking_ == true ? "YES" : "NO";
-    std::string flatShading = State::terrainFlatShading_ == true ? "YES" : "NO";
     std::cout << "Currently picking : " << str << std::endl; 
-    std::cout << "Using Flat Shading : " << flatShading << std::endl;
     deltaCount = 0;
     frameCount = 0;
     std::cout << std::endl;
   }
 }
 
-std::string report(double deltaTime, int nFrames){
+std::string report(GLFWwindow* window, double deltaTime, int nFrames){
   static std::string finalStr = "";
   static double deltaCount;
   static int frameCount;
@@ -46,7 +44,12 @@ std::string report(double deltaTime, int nFrames){
     finalStr = "";
     finalStr += std::to_string(double(deltaCount / nFrames) * 1000) + " ms/frame\n";
     std::string isPicking = State::picking_ == true ? "YES" : "NO";
+    std::string flatShading = State::terrainFlatShading_ == true ? "YES" : "NO";
+    GLdouble xpos, ypos;
+    glfwGetCursorPos(window, &xpos, &ypos);
     finalStr += "Currently picking : " + isPicking + "\n";
+    finalStr += "Using Flat Shading : " + flatShading + "\n"; 
+    finalStr += "Cursor:   X: " + std::to_string(xpos) + " | Y: " + std::to_string(ypos) + "\n"; 
     deltaCount = 0;
     frameCount = 0;
   }
@@ -57,11 +60,14 @@ std::string report(double deltaTime, int nFrames){
 
 GLFWwindow* initializeWindow(const unsigned int windowHeight, const unsigned int windowWidth){ 
 
+  //glfwWindowHint(GLFW_SAMPLES, 4);
+  
   GLFWwindow *window = glfwCreateWindow(windowWidth, // window width
       windowHeight, // window height
       "test", // window title
       NULL,
       NULL);
+  
 
   glfwMakeContextCurrent(window); // define the context.
   return window;

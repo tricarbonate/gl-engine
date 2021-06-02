@@ -25,8 +25,8 @@ int failed(std::string message);
 
 float getDeltaTime(float &lastFrame);
 
-void printStateReport(double deltaTime, int nFrame);
-std::string report(double deltaTime, int nFrames);
+void printStateReport(GLFWwindow* window, double deltaTime, int nFrame);
+std::string report(GLFWwindow* window, double deltaTime, int nFrames);
 
 GLFWwindow* initializeWindow(const unsigned int windowHeight, const unsigned int windowWidth);
 

@@ -12,6 +12,8 @@ class EventHandler{
 
     void handleEvents(float deltaTime);
 
+    static void resetLastMousePos();
+
   private:
   
     void handleKeys(float deltaTime);
