@@ -34,15 +34,15 @@ void Scene::setupScene(){
   /* Initialization of lights */
   lights_ = {
     DirectionalLight(glm::vec3(0.4f, 0.2f, 0.2f),
-        glm::vec3(0.0f, -1.0f, 0.0f)),
-    PointLight(glm::vec3(0.8f, 0.8f, 0.8f),
+        glm::vec3(0.0f, -1.0f, 0.0f))
+/*    PointLight(glm::vec3(0.8f, 0.8f, 0.8f),
         glm::vec3(0.0f, 2.0f, 0.0f), glm::vec3(), "container", sm_.program("lightingShader")),
     PointLight(glm::vec3(0.9f, 0.4f, 0.4f),
         glm::vec3(-1.0f, 3.0f, 0.0f), glm::vec3(), "container", sm_.program("lightingShader")),
     PointLight(glm::vec3(0.4f, 0.9f, 0.0f),
         glm::vec3(0.0f, 6.0f, 0.0f), glm::vec3(), "container", sm_.program("lightingShader")),
     PointLight(glm::vec3(0.1f, 0.1f, 0.8f),
-        glm::vec3(0.0f, 4.0f, 0.0f), glm::vec3(), "container", sm_.program("lightingShader"))
+        glm::vec3(0.0f, 4.0f, 0.0f), glm::vec3(), "container", sm_.program("lightingShader"))*/
   }; 
 
   
@@ -229,16 +229,17 @@ void Scene::drawScene(float deltaTime){
 
   // creates a new model (theier) to draw every 10000 frames.
   // and a new light
-  if(frameCounter_ > 350){
-    models_.push_back(Model("container", "mainShader", sm_.program("mainShader"),
+  if(frameCounter_ > 200){
+    models_.push_back(Model("theiere", "mainShader", sm_.program("mainShader"),
           randomVec3(-20, 20, glm::vec3(1, 0, 1))));
-    physicsEngine_->addObject(&models_.back(), COLLISION_SHAPES::CUBE, 0.5);
+    physicsEngine_->addObject(&models_.back(), COLLISION_SHAPES::CONVEX_HULL, 0.5);
      
    
     lights_.push_back(Light(LightType::POINT, randomVec3(0, 0.8),
         randomVec3(-20, 20, glm::vec3(1, 0, 1)), glm::vec3(), "container",
         sm_.program("lightingShader")));
     physicsEngine_->addObject(&lights_.back(), COLLISION_SHAPES::CUBE, 1);
+    
     
     sm_.bindToModel(models_.back());
 

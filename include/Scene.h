@@ -39,6 +39,9 @@ class Scene{
 
     void addModel(Model model);
 
+    unsigned int getNumberOfObjects() { return models_.size(); }
+    unsigned int getNumberOfLights() { return lights_.size(); }
+
   private:
 
     std::vector<Model> models_;
