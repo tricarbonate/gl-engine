@@ -1,6 +1,8 @@
 #ifndef COMMON_VALUES_HPP
 #define COMMON_VALUES_HPP
 
+#define VOXEL_SIZE 0.5
+
 static GLuint indices[] = {
   0, 1, 2,
   1, 2, 3,
@@ -53,7 +55,77 @@ static float quadVertices[] = { // vertex attributes for a quad that fills the e
      1.0f,  1.0f,  1.0f, 1.0f
 };
 
-static GLfloat vertices[] = {
+static float voxelCoords[] = {
+  // positions          // normals           // texture coords
+  -VOXEL_SIZE, -VOXEL_SIZE, -VOXEL_SIZE,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
+   VOXEL_SIZE, -VOXEL_SIZE, -VOXEL_SIZE,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
+   VOXEL_SIZE,  VOXEL_SIZE, -VOXEL_SIZE,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+   VOXEL_SIZE,  VOXEL_SIZE, -VOXEL_SIZE,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+  -VOXEL_SIZE,  VOXEL_SIZE, -VOXEL_SIZE,  0.0f,  0.0f, -1.0f,  0.0f,  1.0f,
+  -VOXEL_SIZE, -VOXEL_SIZE, -VOXEL_SIZE,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
+
+  -VOXEL_SIZE, -VOXEL_SIZE,  VOXEL_SIZE,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
+   VOXEL_SIZE, -VOXEL_SIZE,  VOXEL_SIZE,  0.0f,  0.0f,  1.0f,  1.0f,  0.0f,
+   VOXEL_SIZE,  VOXEL_SIZE,  VOXEL_SIZE,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+   VOXEL_SIZE,  VOXEL_SIZE,  VOXEL_SIZE,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+  -VOXEL_SIZE,  VOXEL_SIZE,  VOXEL_SIZE,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,
+  -VOXEL_SIZE, -VOXEL_SIZE,  VOXEL_SIZE,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
+
+  -VOXEL_SIZE,  VOXEL_SIZE,  VOXEL_SIZE, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+  -VOXEL_SIZE,  VOXEL_SIZE, -VOXEL_SIZE, -1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+  -VOXEL_SIZE, -VOXEL_SIZE, -VOXEL_SIZE, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+  -VOXEL_SIZE, -VOXEL_SIZE, -VOXEL_SIZE, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+  -VOXEL_SIZE, -VOXEL_SIZE,  VOXEL_SIZE, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+  -VOXEL_SIZE,  VOXEL_SIZE,  VOXEL_SIZE, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+
+   VOXEL_SIZE,  VOXEL_SIZE,  VOXEL_SIZE,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+   VOXEL_SIZE,  VOXEL_SIZE, -VOXEL_SIZE,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+   VOXEL_SIZE, -VOXEL_SIZE, -VOXEL_SIZE,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+   VOXEL_SIZE, -VOXEL_SIZE, -VOXEL_SIZE,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+   VOXEL_SIZE, -VOXEL_SIZE,  VOXEL_SIZE,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+   VOXEL_SIZE,  VOXEL_SIZE,  VOXEL_SIZE,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+
+  -VOXEL_SIZE, -VOXEL_SIZE, -VOXEL_SIZE,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
+   VOXEL_SIZE, -VOXEL_SIZE, -VOXEL_SIZE,  0.0f, -1.0f,  0.0f,  1.0f,  1.0f,
+   VOXEL_SIZE, -VOXEL_SIZE,  VOXEL_SIZE,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+   VOXEL_SIZE, -VOXEL_SIZE,  VOXEL_SIZE,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+  -VOXEL_SIZE, -VOXEL_SIZE,  VOXEL_SIZE,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,
+  -VOXEL_SIZE, -VOXEL_SIZE, -VOXEL_SIZE,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
+
+  -VOXEL_SIZE,  VOXEL_SIZE, -VOXEL_SIZE,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
+   VOXEL_SIZE,  VOXEL_SIZE, -VOXEL_SIZE,  0.0f,  1.0f,  0.0f,  1.0f,  1.0f,
+   VOXEL_SIZE,  VOXEL_SIZE,  VOXEL_SIZE,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+   VOXEL_SIZE,  VOXEL_SIZE,  VOXEL_SIZE,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+  -VOXEL_SIZE,  VOXEL_SIZE,  VOXEL_SIZE,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
+  -VOXEL_SIZE,  VOXEL_SIZE, -VOXEL_SIZE,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
+};
+
+static GLfloat groundVertices[] = {
+  // positions        normals             uv's
+  0.0f, 0.0f, 0.0f,   0.0f, 1.0f, 0.0f,   0.0f, 0.0f,
+  100.0f, 0.0f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,
+  0.0f, 0.0f, 100.0f,   0.0f, 1.0f, 0.0f,   0.0f, 1.0f,
+
+  100.0f, 0.0f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,
+  0.0f, 0.0f, 100.0f,   0.0f, 1.0f, 0.0f,   0.0f, 1.0f,
+  100.0f, 0.0f, 100.0f,   0.0f, 1.0f, 0.0f,   1.0f, 1.0f
+};
+
+static GLfloat lightVertices[] = {
+  /*front face*/
+  -0.5f, -0.5f, 0.0f,     0.0f, 0.0f, -1.0f,      
+  0.5f, -0.5f, 0.0f,     0.0f, 0.0f, -1.0f,      
+  -0.5f, 0.5f, 0.0f,    0.0f, 0.0f, -1.0f,      
+  0.5f, 0.5f, 0.0f,     0.0f, 0.0f, -1.0f,     
+  
+  /*backface*/
+  -0.5f, -0.5f, 1.0f,   0.0f, 0.0f, -1.0f,    
+  0.5f, -0.5f, 1.0f,    0.0f, 0.0f, -1.0f,   
+  -0.5f, 0.5f, 1.0f,    0.0f, 0.0f, -1.0f,  
+  0.5f, 0.5f, 1.0f,     0.0f, 0.0f, -1.0f, 
+};
+
+static GLfloat defaultBlockVertices[] = {
   // positions          // normals           // texture coords
   -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
    0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
@@ -98,32 +170,8 @@ static GLfloat vertices[] = {
   -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
 };
 
-static GLfloat groundVertices[] = {
-  // positions        normals             uv's
-  0.0f, 0.0f, 0.0f,   0.0f, 1.0f, 0.0f,   0.0f, 0.0f,
-  100.0f, 0.0f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,
-  0.0f, 0.0f, 100.0f,   0.0f, 1.0f, 0.0f,   0.0f, 1.0f,
 
-  100.0f, 0.0f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,
-  0.0f, 0.0f, 100.0f,   0.0f, 1.0f, 0.0f,   0.0f, 1.0f,
-  100.0f, 0.0f, 100.0f,   0.0f, 1.0f, 0.0f,   1.0f, 1.0f
-};
-
-static GLfloat lightVertices[] = {
-  /*front face*/
-  -0.5f, -0.5f, 0.0f,     0.0f, 0.0f, -1.0f,      
-  0.5f, -0.5f, 0.0f,     0.0f, 0.0f, -1.0f,      
-  -0.5f, 0.5f, 0.0f,    0.0f, 0.0f, -1.0f,      
-  0.5f, 0.5f, 0.0f,     0.0f, 0.0f, -1.0f,     
-  
-  /*backface*/
-  -0.5f, -0.5f, 1.0f,   0.0f, 0.0f, -1.0f,    
-  0.5f, -0.5f, 1.0f,    0.0f, 0.0f, -1.0f,   
-  -0.5f, 0.5f, 1.0f,    0.0f, 0.0f, -1.0f,  
-  0.5f, 0.5f, 1.0f,     0.0f, 0.0f, -1.0f, 
-};
-
-static GLfloat defaultBlockVertices[] = {
+static GLfloat vertices[] = {
   // positions          // normals           // texture coords
   -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
    0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,

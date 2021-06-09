@@ -13,6 +13,7 @@
 #include "DirectionalLight.h"
 #include "utils.hpp"
 #include "PointLight.h"
+#include "VoxModel.h"
 
 #include <bullet/btBulletDynamicsCommon.h>
 
@@ -75,6 +76,8 @@ class Scene{
     GLuint texture, mirroredTex;
     GLuint fbo, mirrorFbo, mirrorVAO, mirrorVBO, quadVAO, quadVBO;
     GLuint colorBuffers[2];
+
+    VoxModel voxModel_;
 };
 
 

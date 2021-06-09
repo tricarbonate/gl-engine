@@ -69,5 +69,5 @@ class Model {
     btRigidBody* body_;
     btTransform trans_;
 };
-
+    
 #endif // MODEL_H

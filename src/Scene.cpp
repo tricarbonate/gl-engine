@@ -28,6 +28,9 @@ void Scene::setupScene(){
         glm::vec3(4.0f, 10.0f, 0.0f)));
   physicsEngine_->addObject(&models_.back(), COLLISION_SHAPES::CONVEX_HULL); 
   
+  voxModel_ = VoxModel(glm::vec3(10, 0, 10), "mainShader", sm_.program("mainShader"));
+  voxModel_.addVoxel(glm::vec3(0.0f, 0.0f, 0.0f));
+  voxModel_.addVoxel(glm::vec3(0.0f, 1.0f, 0.0f));
 
   physicsEngine_->addTerrain(&terrain_);
 
@@ -45,13 +48,14 @@ void Scene::setupScene(){
         glm::vec3(0.0f, 4.0f, 0.0f), glm::vec3(), "container", sm_.program("lightingShader"))*/
   }; 
 
+
   
   sm_.bindToModels(models_);
   for(size_t i = 1; i < lights_.size(); i++){
     //Oversized collision shape to facilitate light picking
     physicsEngine_->addObject(&lights_[i], COLLISION_SHAPES::CUBE, 1);
   }
-
+  sm_.bindToModel(voxModel_);
 
 
   /* FRAME BUFFER VAO */
@@ -151,7 +155,10 @@ void Scene::drawScene(float deltaTime){
     }
   }
   else{
-    physicsEngine_->removePickingConstraint();
+    std::cout << "check" << std::endl;
+    if(physicsEngine_->getPickedModel() != nullptr){
+      physicsEngine_->removePickingConstraint();
+    }
     hasPicked_ = false;
   }
 
@@ -323,6 +330,23 @@ void Scene::drawEntities(){
       it->second.first.setUniform("mvp", mvp_);
       it->second.first.setUniform("model", modelMatrix_);
       it->second.second[i]->draw();
+      
+      /* DRAW VOX MODELS */
+      if(it->second.second[i] == &voxModel_){
+        for (unsigned int i = 0; i < voxModel_.getPositions().size(); i++){
+          modelMatrix_ = glm::mat4(1.0f);
+          modelMatrix_ = glm::translate(modelMatrix_, voxModel_.getPosition() + voxModel_.getPositions()[i]);
+          modelMatrix_ = glm::rotate(modelMatrix_, voxModel_.getOrientation().x, glm::vec3(1, 0, 0));
+          modelMatrix_ = glm::rotate(modelMatrix_, voxModel_.getOrientation().y, glm::vec3(0, 1, 0));
+          modelMatrix_ = glm::rotate(modelMatrix_, voxModel_.getOrientation().z, glm::vec3(0, 0, 1));
+
+          mvp_ = projectionMatrix_ * viewMatrix_ * modelMatrix_;
+          it->second.first.setUniform("mvp", mvp_);
+          it->second.first.setUniform("model", modelMatrix_);
+          voxModel_.draw();
+
+        }
+      }
     }
   }
 }
@@ -449,3 +473,13 @@ btVector3 Scene::getRayTo(int x, int y){
 // TODO Add debug functions
 //
 // TODO Change aspect ratio (perspective) for window resizes
+//
+//
+//
+//
+//
+//
+//
+// TODO CONCERNING VOXELS 
+//
+// TODO Customizable voxel size
