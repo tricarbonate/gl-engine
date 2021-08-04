@@ -156,35 +156,6 @@ void Scene::drawScene(float deltaTime){
   }
 
 
-  /*
-  * First pass for mirror texture * 
-  glBindFramebuffer(GL_FRAMEBUFFER, mirrorFbo);  
-  glEnable(GL_DEPTH_TEST);
-
-  glClearColor(0.1f, 0.1f, 0.1f, 0.1f);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  
-  modelMatrix_ = glm::mat4(1.0f);
-  camera_.setYaw(camera_.getYaw() + 180.0f);
-  camera_.setPitch(camera_.getPitch() + 180.0f);
-  camera_.updateOrientation(0, 0, false);
-  viewMatrix_ = camera_.lookAt();
-  camera_.setYaw(camera_.getYaw() - 180.0f);
-  camera_.setPitch(camera_.getPitch() - 180.0f);
-  camera_.updateOrientation(0, 0, false);
-  // definition of matrices:
-  if(State::perspective_){
-    projectionMatrix_ = glm::perspective(glm::radians(State::fov_),
-          State::screenWidth_ / State::screenHeight_, State::nearPlane_, State::farPlane_);
-  }
-  else{
-    projectionMatrix_ = glm::ortho(-3.0, 3.0, -3.0, 3.0, 1.0, 100.0);
-  }
-  drawEntities();
-  drawLights();
-  drawTerrain();
-  */
-
   //viewMatrix_ = camera_.lookAt();
   modelMatrix_ = glm::mat4(1.0f);
   mvp_ = projectionMatrix_ * viewMatrix_ * modelMatrix_;
@@ -212,20 +183,10 @@ void Scene::drawScene(float deltaTime){
   viewMatrix_ = camera_.lookAt();
   modelMatrix_ = glm::mat4(1.0f);
   mvp_ = projectionMatrix_ * viewMatrix_ * modelMatrix_;
-  
-  //std::cout << camera_.getPos().x << " " << camera_.getPos().y << " " << camera_.getPos().z << std::endl;
 
   drawEntities();
   drawLights();
   drawTerrain();
-
-  /* drawMirror
-  glDisable(GL_DEPTH_TEST);
-  sm_.program("mainShader")->useProgram();
-  glBindVertexArray(mirrorVAO);
-  glBindTexture(GL_TEXTURE_2D, mirroredTex);
-  glDrawArrays(GL_TRIANGLES, 0, 6);
-  */    
 
   // creates a new model (theier) to draw every 10000 frames.
   // and a new light
@@ -310,15 +271,6 @@ void Scene::drawEntities(){
         it->second.first.setUniform("picked", (unsigned int)0);
       }
 
-
-        //modelMatrix_ = glm::scale(modelMatrix_, glm::vec3(1, -1, 1));
-        //mvp_ = projectionMatrix_ * viewMatrix_ * modelMatrix_;
-        //it->second.first.setUniform("mvp", mvp_);
-        //it->second.first.setUniform("model", modelMatrix_);
-        //it->second.second[i]->draw();
-        //modelMatrix_ = glm::scale(modelMatrix_, glm::vec3(1, -1, 1));
-
-
       mvp_ = projectionMatrix_ * viewMatrix_ * modelMatrix_;
       it->second.first.setUniform("mvp", mvp_);
       it->second.first.setUniform("model", modelMatrix_);
@@ -376,76 +328,3 @@ btVector3 Scene::getRayTo(int x, int y){
   }
   return rayDir;
 }
-
-// TODO have lights move with deltaTime
-// TODO better lighting system, (maybe Entity class?)
-// TODO include spot light handling in shaders...
-// TODO DirectionalLight is a special case... delete the class and find another solution
-//
-// TODO class that handles movement,
-// TODO syncing with bullet physics and entities positions
-// physics variables, communication with bullet physics in relation with deltaTime
-//
-// TODO Find a real idea
-//
-// TODO More State Handling to use imgui
-// TODO More imgui functionalities
-
-// TODO Scene class should only contain entities initialization and drawing.
-//
-// TODO Find a serialization library
-
-// TODO Should not pick the terrain
-// TODO Add a shader for picked object
-// TODO Move rayTo() function (where?)
-// TODO Controller inputs?
-//
-// TODO Shaders to highlight picked object
-// TODO Terrain not interfering with picking 
-
-// TODO Mirror rendering using framebuffers
-
-// TODO Time handling, events with time instead of number of frames
-// TODO reports work with time instead of n of frames too.
-//
-// TODO Search for more cool kernel effects
-// TODO Cubemaps for skyboxes
-
-// TODO More usable Terrain class
-// TODO Create a mesh from Chunk?
-// TODO Learn about Chunk creation...
-
-// TODO btHeightfield
-// TODO Once heightfield are done, tesselation bezier for terrain? could be good
-//
-// TODO MESH: smarter Vao construction, with more possible data type, (automatically from data)
-//
-// TODO Gerer les warnings
-//
-// TODO Change makefile to compile .h .cpp recursively (folders)
-//
-// TODO GLSL Cleaner uniform data structures (in struct... out struct)
-// TODO Uniform Buffer Objects
-// TODO Andvanced GLSL (learnopengl.com)
-// TODO Geometry and tesselation shaders
-// TODO Antialiasing (learnopengl.com)
-// TODO Normal Mapping
-// TODO Bloom effect for lights
-//
-// TODO Faire une map sur papier des classes Models, Mesh etc...
-//
-// TODO boost::flyweight (juste savoir ce que c'est...)
-//
-// TODO !!!! Search for and learn to use good debugging tools
-// TODO search for boost::ptr_vector
-//
-//
-// TODO Cleanup functions for pointers :
-// - Custurm pointers...
-// - bullet physics cleanup...
-// - gl and window cleanup...
-// TODO maybe use smart pointers
-//
-// TODO Add debug functions
-//
-// TODO Change aspect ratio (perspective) for window resizes
