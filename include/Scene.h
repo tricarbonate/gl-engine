@@ -13,6 +13,7 @@
 #include "DirectionalLight.h"
 #include "utils.hpp"
 #include "PointLight.h"
+#include "SpotLight.h"
 
 #include <bullet/btBulletDynamicsCommon.h>
 

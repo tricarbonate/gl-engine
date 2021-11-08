@@ -89,8 +89,6 @@ int main(){
       ImGui::Render();
       ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-      std::cout << scene.getNumberOfObjects() << std::endl;
-
       glfwSwapBuffers(window);
       glfwPollEvents();
     } while(glfwWindowShouldClose(window) == 0 &&

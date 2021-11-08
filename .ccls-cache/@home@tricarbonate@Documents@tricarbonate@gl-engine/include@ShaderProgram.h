@@ -92,6 +92,7 @@ inline void ShaderProgram::setUniform_part<unsigned int>(GLuint id, unsigned int
 inline void ShaderProgram::setUniformLights(const std::vector<Light>& lights)
 {
   unsigned int pointLightCount = 0;
+  unsigned int spotLightCount = 0;
   for(unsigned int i = 0; i < lights.size(); i++){
     switch(lights[i].getType()){
       case LightType::DIRECTIONAL:
@@ -128,10 +129,38 @@ inline void ShaderProgram::setUniformLights(const std::vector<Light>& lights)
         break;
 
       case LightType::SPOT:
+        char buffer2[64];
+
+        sprintf(buffer2, "spotLights[%i].position", spotLightCount);
+        setUniform(buffer2, lights[i].getPosition());
+
+        sprintf(buffer2, "spotLights[%i].direction", spotLightCount);
+        setUniform(buffer2, lights[i].getDirection());
+
+        sprintf(buffer2, "spotLights[%i].ambient", spotLightCount);
+        setUniform(buffer2, lights[i].getAmbientColor());
+
+        sprintf(buffer2, "spotLights[%i].diffuse", spotLightCount);
+        setUniform(buffer2, lights[i].getDiffuseColor());
+        
+        sprintf(buffer2, "spotLights[%i].specular", spotLightCount);
+        setUniform(buffer2, lights[i].getSpecularColor());
+
+        sprintf(buffer2, "spotLights[%i].constant", spotLightCount);
+        setUniform(buffer2, 1.0f);
+
+        sprintf(buffer2, "spotLights[%i].linear", spotLightCount);
+        setUniform(buffer2, 0.03f); 
+
+        sprintf(buffer2, "spotLights[%i].quadratic", spotLightCount);
+        setUniform(buffer2, 0.0009f); 
+        spotLightCount++;
         break;
     }
   }
+
   setUniform("pointLightCount", pointLightCount);
+  setUniform("spotLightCount", spotLightCount);
 }
 
 #endif //SHADER_PROGRAM

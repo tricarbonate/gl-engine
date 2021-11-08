@@ -97,9 +97,9 @@ void Mesh::createInstanced(std::vector<glm::vec3> offsets){
 btScalar* Mesh::getVerticesCoordinates(){
   static std::vector<btScalar> coordinates;
   for(size_t i = 0; i < vertices_.size(); i++){
-    coordinates.push_back(btScalar(vertices_[i].position.r));
-    coordinates.push_back(btScalar(vertices_[i].position.g));
-    coordinates.push_back(btScalar(vertices_[i].position.b));
+    coordinates.push_back(btScalar(vertices_[i].position.x));
+    coordinates.push_back(btScalar(vertices_[i].position.y));
+    coordinates.push_back(btScalar(vertices_[i].position.z));
   }
 
   return &coordinates[0];

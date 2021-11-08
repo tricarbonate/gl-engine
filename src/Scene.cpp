@@ -22,7 +22,6 @@ void Scene::setupScene(){
     physicsEngine_->addObject(&models_.back(), COLLISION_SHAPES::CUBE);
   }
   
-  
   //theire model 
   models_.push_back(Model("theiere", "mainShader", sm_.program("mainShader"),
         glm::vec3(4.0f, 10.0f, 0.0f)));
@@ -33,8 +32,18 @@ void Scene::setupScene(){
 
   /* Initialization of lights */
   lights_ = {
+    // ambient light
     DirectionalLight(glm::vec3(0.4f, 0.2f, 0.2f),
         glm::vec3(0.0f, -1.0f, 0.0f)),
+
+    // player light
+    SpotLight(glm::vec3(0.9f, 0.8f, 0.5f),
+        glm::vec3(0.0f, 2.0f, 0.0f), glm::vec3(), "container", sm_.program("lightingShader")),
+
+    // fixed spot light
+    SpotLight(glm::vec3(0.9f, 0.8f, 0.5f),
+        glm::vec3(-5.0f, 6.0f, 0.0f), glm::vec3(1.0f, -0.5f, 1.0f), "container", sm_.program("lightingShader")),
+
     PointLight(glm::vec3(0.8f, 0.8f, 0.8f),
         glm::vec3(0.0f, 2.0f, 0.0f), glm::vec3(), "container", sm_.program("lightingShader")),
     PointLight(glm::vec3(0.9f, 0.4f, 0.4f),
@@ -42,17 +51,15 @@ void Scene::setupScene(){
     PointLight(glm::vec3(0.4f, 0.9f, 0.0f),
         glm::vec3(0.0f, 6.0f, 0.0f), glm::vec3(), "container", sm_.program("lightingShader")),
     PointLight(glm::vec3(0.1f, 0.1f, 0.8f),
-        glm::vec3(0.0f, 4.0f, 0.0f), glm::vec3(), "container", sm_.program("lightingShader"))
+        glm::vec3(0.0f, 4.0f, 0.0f), glm::vec3(), "container", sm_.program("lightingShader")),
+
   }; 
 
-  
   sm_.bindToModels(models_);
-  for(size_t i = 1; i < lights_.size(); i++){
+  for(size_t i = 3; i < lights_.size(); i++){
     //Oversized collision shape to facilitate light picking
-    physicsEngine_->addObject(&lights_[i], COLLISION_SHAPES::CUBE, 1);
+    physicsEngine_->addObject(&lights_[i], COLLISION_SHAPES::CUBE, 0.1);
   }
-
-
 
   /* FRAME BUFFER VAO */
   glGenVertexArrays(1, &quadVAO);
@@ -160,7 +167,6 @@ void Scene::drawScene(float deltaTime){
   modelMatrix_ = glm::mat4(1.0f);
   mvp_ = projectionMatrix_ * viewMatrix_ * modelMatrix_;
 
-
   /* Draw normal scene */
   glBindFramebuffer(GL_FRAMEBUFFER, fbo);
   glEnable(GL_DEPTH_TEST);
@@ -168,7 +174,6 @@ void Scene::drawScene(float deltaTime){
 
   glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 
   // definition of matrices:
   if(State::perspective_){
@@ -183,6 +188,10 @@ void Scene::drawScene(float deltaTime){
   viewMatrix_ = camera_.lookAt();
   modelMatrix_ = glm::mat4(1.0f);
   mvp_ = projectionMatrix_ * viewMatrix_ * modelMatrix_;
+
+  lights_[1].setPosition(glm::vec3(camera_.getPos().x, camera_.getPos().y - 0.5f, camera_.getPos().z));
+  lights_[1].setDirection(camera_.getFront().x, camera_.getFront().y, camera_.getFront().z);
+  //lights_[1].setIntensity(1);
 
   drawEntities();
   drawLights();
@@ -231,7 +240,7 @@ void Scene::drawLights(){
   //glUseProgram(0);
   sm_.program("lightingShader")->useProgram();
   for(unsigned int i = 0; i < lights_.size(); i++){
-    if(lights_[i].getType() == LightType::POINT){
+    if(lights_[i].getType() != LightType::DIRECTIONAL){
       modelMatrix_ = glm::mat4(1.0f);
       modelMatrix_ = glm::translate(modelMatrix_, lights_[i].getPosition());
       modelMatrix_ = glm::scale(modelMatrix_ , glm::vec3(0.2f));
@@ -321,8 +330,8 @@ btVector3 Scene::getRayTo(int x, int y){
   btVector3 dHor = horizontal * 1.0f / State::screenWidth_;
   btVector3 dVert = vertical * 1.0f / State::screenHeight_;
   btVector3 rayTo = rayToCenter - 0.5f * horizontal + 0.5f * vertical;
-  if(!State::cursorDisabled_){
 
+  if(!State::cursorDisabled_){
     rayTo += btScalar(x) * dHor;
     rayTo -= btScalar(y) * dVert;
   }
