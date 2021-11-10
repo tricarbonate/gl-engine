@@ -123,6 +123,13 @@ std::vector<float> Chunk::generateNoiseMap(int xOffset, int zOffset){
     return normalizedNoiseValues;
 }
 
+double Chunk::getHeight(const int x, const int z) {
+    std::cout << x << "  " << z << std::endl;
+    float easedNoise = std::pow(noiseMap_[x + z*chunkWidth] * 1.1, 3);
+    std::cout << std::fmax(easedNoise * meshHeight, WATER_HEIGHT * 0.5 * meshHeight) << std::endl;
+    return std::fmax(easedNoise * meshHeight, WATER_HEIGHT * 0.5 * meshHeight);
+}
+
 
 std::vector<float> Chunk::generateVertices(const std::vector<float> &noiseMap){
     std::vector<float> v;
@@ -178,13 +185,13 @@ std::vector<float> Chunk::generateColor(const std::vector<float> &vertices){
     for(size_t i = 1; i < vertices.size(); i+=3){
         color = glm::vec3(0.5 + vertices[i] / 2, 0.8 + cos(vertices[i]) / 10, vertices[i] / 2);
         color /= 10.0;
-        colors.push_back(color.r);
-        colors.push_back(color.g);
-        colors.push_back(color.b);
+        //colors.push_back(color.r);
+        //colors.push_back(color.g);
+        //colors.push_back(color.b);
 
-        //colors.push_back(1.0f);
-        //colors.push_back(1.0f);
-        //colors.push_back(1.0f);
+        colors.push_back(0.0f);
+        colors.push_back(0.0f);
+        colors.push_back(0.0f);
     }
 
     return colors;

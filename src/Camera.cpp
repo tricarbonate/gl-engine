@@ -46,17 +46,17 @@ void Camera::goDownward(float deltaTime){
   this->pos_ -= glm::vec3(0.0f, 1.0f, 0.0f) * deltaTime * speed_;
 }
 
-void Camera::applyPhysics(float deltaTime) {
-    const int base_height = (-10.0f + 1.3f);
-    if(this->pos_.y <= base_height + 0.1f){
+void Camera::applyPhysics(float deltaTime, const float baseHeight) {
+    //const int base_height = (-10.0f + 1.3f);
+    if(this->pos_.y <= baseHeight){
         if(this->currentSpeed_ > 0) {
             this->pos_.y += currentSpeed_ * deltaTime; 
         }
         else{
-            this->pos_.y = base_height;
+            this->pos_.y = baseHeight;
             jumpCounter_ = 0;
         }
-        //this->currentSpeed_ = 0;
+        this->currentSpeed_ = 0;
         //nothing;
     }
     else {

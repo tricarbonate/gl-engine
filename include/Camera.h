@@ -46,7 +46,7 @@ class Camera {
     void updateOrientation(double xpos, double ypos, bool constrainPitch = true);
     void resetLastMousePos();
 
-    void applyPhysics(float deltaTime);
+    void applyPhysics(float deltaTime, const float baseHeight);
 
   private:
 

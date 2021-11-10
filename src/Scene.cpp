@@ -184,12 +184,16 @@ void Scene::drawScene(float deltaTime){
     projectionMatrix_ = glm::ortho(-3.0, 3.0, -3.0, 3.0, 1.0, 100.0);
   }
 
-  camera_.applyPhysics(deltaTime_);
+    const double currentHeight = terrain_.getHeight(camera_.getPos().x, camera_.getPos().z);
+    std::cout << "HEIGHT: " << currentHeight << std::endl;
+  camera_.applyPhysics(deltaTime_, -10.0f + 1.3f);
+
   viewMatrix_ = camera_.lookAt();
   modelMatrix_ = glm::mat4(1.0f);
   mvp_ = projectionMatrix_ * viewMatrix_ * modelMatrix_;
 
   lights_[1].setPosition(glm::vec3(camera_.getPos().x, camera_.getPos().y - 0.5f, camera_.getPos().z));
+  lights_[1].setPosition(lights_[1].getPosition() - camera_.getRight() * 0.1f);
   lights_[1].setDirection(camera_.getFront().x, camera_.getFront().y, camera_.getFront().z);
   //lights_[1].setIntensity(1);
 
@@ -199,22 +203,22 @@ void Scene::drawScene(float deltaTime){
 
   // creates a new model (theier) to draw every 10000 frames.
   // and a new light
-  //if(frameCounter_ > 200){
+  if(frameCounter_ > 200){
     //models_.push_back(Model("theiere", "mainShader", sm_.program("mainShader"),
           //randomVec3(-20, 20, glm::vec3(1, 0, 1))));
     //physicsEngine_->addObject(&models_.back(), COLLISION_SHAPES::CONVEX_HULL, 0.5);
      
    
-    //lights_.push_back(Light(LightType::POINT, randomVec3(0, 0.8),
-        //randomVec3(-20, 20, glm::vec3(1, 0, 1)), glm::vec3(), "container",
-        //sm_.program("lightingShader")));
-    //physicsEngine_->addObject(&lights_.back(), COLLISION_SHAPES::CUBE, 1);
+    lights_.push_back(Light(LightType::POINT, randomVec3(0, 0.8),
+        randomVec3(-20, 20, glm::vec3(1, 0, 1)), glm::vec3(), "container",
+        sm_.program("lightingShader")));
+    physicsEngine_->addObject(&lights_.back(), COLLISION_SHAPES::CUBE, 0.1);
     
     
     //sm_.bindToModel(models_.back());
 
-    //frameCounter_ = 0;
-  //}
+    frameCounter_ = 0;
+  }
 
   if(State::useGammaCorrection_)
     glEnable(GL_FRAMEBUFFER_SRGB);

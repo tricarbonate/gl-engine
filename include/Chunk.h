@@ -34,6 +34,8 @@ public:
 
     GLuint getVao() { return vao_; }
 
+    double getHeight(const int x, const int z);
+
 private:
     // methods for chunk data generation
     std::vector<GLuint> generateIndices();
@@ -48,8 +50,8 @@ private:
     std::vector<float> normals_;
     std::vector<float> colors_;
 
-    GLuint vao_, ebo_, vbo_[3];
 
+    GLuint vao_, ebo_, vbo_[3];
 };
 
 #endif // __CHUNK_H__

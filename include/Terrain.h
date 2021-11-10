@@ -28,6 +28,7 @@ class Terrain {
 
     //getters
     double getBaseHeight() { return baseHeight_; }
+    double getHeight(const double x, const double z);
 
 
     // TODO for btHeightfield
@@ -41,6 +42,7 @@ class Terrain {
   private:
     std::vector<Chunk> chunks_;    
 
+    Chunk getChunk(const double x, const double z);
     double baseHeight_;
 };
 
