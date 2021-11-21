@@ -30,9 +30,9 @@ void Terrain::draw(glm::mat4 &model, glm::mat4& view, glm::mat4 &proj, ShaderPro
         for(int x = 0; x < xMapChunk; x++){
 
            model = glm::mat4(1.0f); 
-           model = glm::translate(model, glm::vec3(-chunkWidth / 2.0 + (chunkWidth - 1) * x,
+           model = glm::translate(model, glm::vec3(-CHUNK_WIDTH / 2.0 + (CHUNK_WIDTH - 1) * x,
                        baseHeight_,
-                       -chunkHeight / 2.0 + (chunkHeight - 1) * z));
+                       -CHUNK_HEIGHT / 2.0 + (CHUNK_HEIGHT - 1) * z));
 
            glm::mat4 mvp = proj * view * model;
            shaderProgram.setUniform("mvp", mvp);
@@ -40,7 +40,7 @@ void Terrain::draw(glm::mat4 &model, glm::mat4& view, glm::mat4 &proj, ShaderPro
 
 
            glBindVertexArray(chunks_[x + z*xMapChunk].getVao());
-           glDrawElements(GL_TRIANGLES, chunkWidth * chunkHeight * 6, GL_UNSIGNED_INT, 0);
+           glDrawElements(GL_TRIANGLES, CHUNK_WIDTH * CHUNK_WIDTH * 6, GL_UNSIGNED_INT, 0);
         }
     }
 }
@@ -48,12 +48,12 @@ void Terrain::draw(glm::mat4 &model, glm::mat4& view, glm::mat4 &proj, ShaderPro
 double Terrain::getHeight(const double x, const double z) {
     Chunk chunk = getChunk(x, z);
     //chunk.getHeight();
-    return chunk.getHeight((int)x % chunkWidth, (int)z % chunkWidth);
+    return chunk.getHeight((int)x % CHUNK_WIDTH, (int)z % CHUNK_WIDTH);
 }
 
 Chunk Terrain::getChunk(const double x, const double z) {
-    const int X = ceil(x / chunkWidth);
-    const int Z = ceil(z / chunkWidth);
+    const int X = ceil(x / CHUNK_WIDTH);
+    const int Z = ceil(z / CHUNK_WIDTH);
     //std::cout << X << " " << Z << std::endl;
     return chunks_[X + Z * xMapChunk];
 }

@@ -54,21 +54,21 @@ void Chunk::generateMapChunk(int xOffset, int zOffset){
 std::vector<GLuint> Chunk::generateIndices(){
     std::vector<GLuint> indices;
     
-    for (int y = 0; y < chunkHeight; y++)
-        for (int x = 0; x < chunkWidth; x++) {
-            int pos = x + y*chunkWidth;
+    for (int y = 0; y < CHUNK_HEIGHT; y++)
+        for (int x = 0; x < CHUNK_WIDTH; x++) {
+            int pos = x + y*CHUNK_WIDTH;
             
-            if (x == chunkWidth - 1 || y == chunkHeight - 1) {
+            if (x == CHUNK_WIDTH - 1 || y == CHUNK_HEIGHT - 1) {
                 // Don't create indices for right or top edge
                 continue;
             } else {
                 // Top left triangle of square
-                indices.push_back(pos + chunkWidth);
+                indices.push_back(pos + CHUNK_WIDTH);
                 indices.push_back(pos);
-                indices.push_back(pos + chunkWidth + 1);
+                indices.push_back(pos + CHUNK_WIDTH + 1);
                 // Bottom right triangle of square
                 indices.push_back(pos + 1);
-                indices.push_back(pos + 1 + chunkWidth);
+                indices.push_back(pos + 1 + CHUNK_WIDTH);
                 indices.push_back(pos);
             }
         }
@@ -86,37 +86,37 @@ std::vector<float> Chunk::generateNoiseMap(int xOffset, int zOffset){
     float freq = 1;
     float maxPossibleHeight = 0;
     
-    for (int i = 0; i < octaves; i++) {
+    for (int i = 0; i < OCTAVES; i++) {
         maxPossibleHeight += amp;
-        amp *= persistence;
+        amp *= PERSISTENCE;
     }
     
-    for (int y = 0; y < chunkHeight; y++) {
-        for (int x = 0; x < chunkWidth; x++) {
+    for (int y = 0; y < CHUNK_HEIGHT; y++) {
+        for (int x = 0; x < CHUNK_WIDTH; x++) {
             amp  = 1;
             freq = 1;
             float noiseHeight = 0;
-            for (int i = 0; i < octaves; i++) {
-                float xSample = (x + xOffset * (chunkWidth-1))  / noiseScale * freq;
-                float ySample = (y + zOffset * (chunkHeight-1)) / noiseScale * freq;
+            for (int i = 0; i < OCTAVES; i++) {
+                float xSample = (x + xOffset * (CHUNK_WIDTH-1))  / NOISE_SCALE * freq;
+                float ySample = (y + zOffset * (CHUNK_HEIGHT-1)) / NOISE_SCALE * freq;
                 
                 float perlinValue = perlin_noise(xSample, ySample, p);
                 noiseHeight += perlinValue * amp;
                 
                 // Lacunarity  --> Increase in frequency of octaves
                 // Persistence --> Decrease in amplitude of octaves
-                amp  *= persistence;
-                freq *= lacunarity;
+                amp  *= PERSISTENCE;
+                freq *= LACUNARITY;
             }
             
             noiseValues.push_back(noiseHeight);
         }
     }
     
-    for (int y = 0; y < chunkHeight; y++) {
-        for (int x = 0; x < chunkWidth; x++) {
+    for (int y = 0; y < CHUNK_HEIGHT; y++) {
+        for (int x = 0; x < CHUNK_WIDTH; x++) {
             // Inverse lerp and scale values to range from 0 to 1
-            normalizedNoiseValues.push_back((noiseValues[x + y*chunkWidth] + 1) / maxPossibleHeight);
+            normalizedNoiseValues.push_back((noiseValues[x + y*CHUNK_WIDTH] + 1) / maxPossibleHeight);
         }
     }
 
@@ -125,23 +125,23 @@ std::vector<float> Chunk::generateNoiseMap(int xOffset, int zOffset){
 
 double Chunk::getHeight(const int x, const int z) {
     std::cout << x << "  " << z << std::endl;
-    float easedNoise = std::pow(noiseMap_[x + z*chunkWidth] * 1.1, 3);
-    std::cout << std::fmax(easedNoise * meshHeight, WATER_HEIGHT * 0.5 * meshHeight) << std::endl;
-    return std::fmax(easedNoise * meshHeight, WATER_HEIGHT * 0.5 * meshHeight);
+    float easedNoise = std::pow(noiseMap_[x + z*CHUNK_WIDTH] * 1.1, 3);
+    std::cout << std::fmax(easedNoise * MESH_HEIGHT, WATER_HEIGHT * 0.5 * MESH_HEIGHT) << std::endl;
+    return std::fmax(easedNoise * MESH_HEIGHT, WATER_HEIGHT * 0.5 * MESH_HEIGHT);
 }
 
 
 std::vector<float> Chunk::generateVertices(const std::vector<float> &noiseMap){
     std::vector<float> v;
     
-    for (int y = 0; y < chunkHeight + 1; y++)
-        for (int x = 0; x < chunkWidth; x++) {
+    for (int y = 0; y < CHUNK_HEIGHT + 1; y++)
+        for (int x = 0; x < CHUNK_WIDTH; x++) {
             v.push_back(x);
             // Apply cubic easing to the noise
-            float easedNoise = std::pow(noiseMap[x + y*chunkWidth] * 1.1, 3);
+            float easedNoise = std::pow(noiseMap[x + y*CHUNK_WIDTH] * 1.1, 3);
             // Scale noise to match meshHeight
             // Pervent vertex height from being below WATER_HEIGHT
-            v.push_back(std::fmax(easedNoise * meshHeight, WATER_HEIGHT * 0.5 * meshHeight));
+            v.push_back(std::fmax(easedNoise * MESH_HEIGHT, WATER_HEIGHT * 0.5 * MESH_HEIGHT));
             v.push_back(y);
         }
     

@@ -12,14 +12,14 @@
 
 
 //noise params
-const int octaves = 5;
-const float meshHeight = 0;  // Vertical scaling
-const float noiseScale = 64;  // Horizontal scaling
-const float persistence = 0.5;
-const float lacunarity = 2;
+const int OCTAVES = 5;
+const float MESH_HEIGHT = 0;  // Vertical scaling
+const float NOISE_SCALE = 64;  // Horizontal scaling
+const float PERSISTENCE = 0.5;
+const float LACUNARITY = 2;
 
-const int chunkWidth = 127;
-const int chunkHeight = 127;
+const int CHUNK_WIDTH = 127;
+const int CHUNK_HEIGHT = 127;
 
 const float WATER_HEIGHT = 0.1f;
 
