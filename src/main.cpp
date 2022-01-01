@@ -25,7 +25,7 @@ int main(){
 
   /* WINDOW AND SCENE INITIALIZATION */
   initializeGlfw();
-  
+
   //setup window properties:
   GLFWwindow* window;
   window = initializeWindow(WINDOW_HEIGHT, WINDOW_WIDTH);
@@ -36,12 +36,12 @@ int main(){
   Assets::defineAssets();
   Scene scene = Scene(window, &physicsEngine);
   scene.setupScene();
-  
+
   EventHandler eventHandler(window, scene.getCamera());
 
   glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
   glfwSwapInterval(0);
-  
+
 
       // Setup Dear ImGui context
   IMGUI_CHECKVERSION();

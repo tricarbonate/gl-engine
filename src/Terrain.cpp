@@ -29,7 +29,7 @@ void Terrain::draw(glm::mat4 &model, glm::mat4& view, glm::mat4 &proj, ShaderPro
     for(int z = 0; z < zMapChunk; z++){
         for(int x = 0; x < xMapChunk; x++){
 
-           model = glm::mat4(1.0f); 
+           model = glm::mat4(1.0f);
            model = glm::translate(model, glm::vec3(-CHUNK_WIDTH / 2.0 + (CHUNK_WIDTH - 1) * x,
                        baseHeight_,
                        -CHUNK_HEIGHT / 2.0 + (CHUNK_HEIGHT - 1) * z));
@@ -54,7 +54,6 @@ double Terrain::getHeight(const double x, const double z) {
 Chunk Terrain::getChunk(const double x, const double z) {
     const int X = ceil(x / CHUNK_WIDTH);
     const int Z = ceil(z / CHUNK_WIDTH);
-    //std::cout << X << " " << Z << std::endl;
     return chunks_[X + Z * xMapChunk];
 }
 

@@ -53,7 +53,7 @@ class Scene{
 
     Terrain terrain_;
 
-    ShaderManager sm_; 
+    ShaderManager sm_;
     PhysicsEngine* physicsEngine_;
 
     double deltaTime_;
@@ -70,7 +70,7 @@ class Scene{
     void drawEntities();
     void drawTerrain();
 
-    /* */ 
+    /* */
     int frameCounter_ = 0;
 
     GLuint texture, mirroredTex;

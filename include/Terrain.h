@@ -1,7 +1,7 @@
 #ifndef __TERRAIN_H__
 #define __TERRAIN_H__
 
-#include <vector> 
+#include <vector>
 #include <GL/glew.h>
 
 #include <glm/glm.hpp>
@@ -40,7 +40,7 @@ class Terrain {
     float getMaxHeight();
 
   private:
-    std::vector<Chunk> chunks_;    
+    std::vector<Chunk> chunks_;
 
     Chunk getChunk(const double x, const double z);
     double baseHeight_;

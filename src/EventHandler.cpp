@@ -19,7 +19,7 @@ void EventHandler::handleEvents(float deltaTime){
 
 
 void EventHandler::handleKeys(float deltaTime){
-    // Camera movement 
+    // Camera movement
     if(pressed(GLFW_KEY_W)){
         camera_->goForward(deltaTime);
     }
@@ -35,7 +35,7 @@ void EventHandler::handleKeys(float deltaTime){
     if(pressed(GLFW_KEY_Q) && releasedJump_){
         std::cout << "SPACE" << std::endl;
         releasedJump_ = false;
-        camera_->goUpward();
+        camera_->jump();
     }
     if(!pressed(GLFW_KEY_Q)){
         releasedJump_ = true;
@@ -55,7 +55,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         //camera_->goUpward();
     //}
     if(key == GLFW_KEY_M && action == GLFW_PRESS){
-        State::terrainFlatShading_ = !State::terrainFlatShading_; 
+        State::terrainFlatShading_ = !State::terrainFlatShading_;
     }
 
     if(key == GLFW_KEY_F && action == GLFW_PRESS){
@@ -69,7 +69,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     if(key == GLFW_KEY_P && action == GLFW_PRESS){
         State::postProcessingEffect_ = static_cast<Effect>(static_cast<int>(State::postProcessingEffect_) + 1);
         if(static_cast<int>(State::postProcessingEffect_) == 5){
-            
+
             State::postProcessingEffect_ = static_cast<Effect>(static_cast<int>(0));
         }
     }
@@ -91,7 +91,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods){
     if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS){
         State::picking_ = !State::picking_;
-    }     
+    }
 }
 
 

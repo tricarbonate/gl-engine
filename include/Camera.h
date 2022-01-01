@@ -9,6 +9,7 @@
 //#include <GLFW/glfw3.h>
 //
 #include "State.h"
+#include "float.hpp"
 
 class Camera {
 
@@ -32,7 +33,7 @@ class Camera {
 
     // setters
     void setPos(glm::vec3 pos) {pos_ = pos;}
-    void setYaw(double yaw) { yaw_ = yaw; } 
+    void setYaw(double yaw) { yaw_ = yaw; }
     void setPitch(double pitch) { pitch_ = pitch; }
     void setFirstMouse(bool firstMouse) { firstMouse_ = firstMouse; }
 
@@ -40,7 +41,7 @@ class Camera {
     void goBackward(float deltaTime);
     void goLeft(float deltaTime);
     void goRight(float deltaTime);
-    void goUpward();
+    void jump();
     void goDownward(float deltaTime);
 
     void updateOrientation(double xpos, double ypos, bool constrainPitch = true);
@@ -49,6 +50,8 @@ class Camera {
     void applyPhysics(float deltaTime, const float baseHeight);
 
   private:
+
+    bool onGround(float groundHeight);
 
     glm::vec3 pos_;
     glm::vec3 tar_;
@@ -64,8 +67,8 @@ class Camera {
     double lastX_, lastY_;
 
     const float speed_;
-    double currentSpeed_;
-    double acceleration_;
+    glm::vec3 currentSpeed_;
+    glm::vec3 acceleration_;
 
     unsigned int jumpCounter_;
 };
@@ -73,4 +76,4 @@ class Camera {
 //void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 //void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 
-#endif // __CAMERA_H__ 
+#endif // __CAMERA_H__
