@@ -37,17 +37,17 @@ class Camera {
     void setPitch(double pitch) { pitch_ = pitch; }
     void setFirstMouse(bool firstMouse) { firstMouse_ = firstMouse; }
 
-    void goForward(float deltaTime);
-    void goBackward(float deltaTime);
-    void goLeft(float deltaTime);
-    void goRight(float deltaTime);
+    void goForward();
+    void goBackward();
+    void goLeft();
+    void goRight();
     void jump();
-    void goDownward(float deltaTime);
+    void goDownward();
 
     void updateOrientation(double xpos, double ypos, bool constrainPitch = true);
     void resetLastMousePos();
 
-    void applyPhysics(float deltaTime, const float baseHeight);
+    void applyPhysics(const float baseHeight);
 
   private:
 

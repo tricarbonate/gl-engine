@@ -58,9 +58,9 @@ void PhysicsEngine::addHeightField(Terrain* terrain){
 }
 
 
-void PhysicsEngine::updateWorldPhysics(double deltaTime)
+void PhysicsEngine::updateWorldPhysics()
 {
-    dynamicsWorld_->stepSimulation(deltaTime, 10);
+    dynamicsWorld_->stepSimulation(State::deltaTime_, 10);
 
     for (int j = dynamicsWorld_->getNumCollisionObjects() - 1; j >= 0; j--) {
         btCollisionObject* obj = dynamicsWorld_->getCollisionObjectArray()[j];

@@ -20,38 +20,38 @@ Camera::Camera():
 
 Camera::~Camera(){}
 
-void Camera::goForward(float deltaTime){
-    this->pos_ += speed_ * deltaTime * front_;
+void Camera::goForward(){
+    this->pos_ += speed_ * (float)State::deltaTime_ * front_;
 }
 
-void Camera::goBackward(float deltaTime){
-    this->pos_ -= speed_ * deltaTime * front_;
+void Camera::goBackward(){
+    this->pos_ -= speed_ * (float)State::deltaTime_ * front_;
 }
 
-void Camera::goLeft(float deltaTime){
-    this->pos_ -= normalize(glm::cross(front_, up_)) * speed_ * deltaTime;
+void Camera::goLeft(){
+    this->pos_ -= normalize(glm::cross(front_, up_)) * speed_ * (float)State::deltaTime_;
 }
 
-void Camera::goRight(float deltaTime){
-    this->pos_ += normalize(glm::cross(front_, up_)) * speed_ * deltaTime;
+void Camera::goRight(){
+    this->pos_ += normalize(glm::cross(front_, up_)) * speed_ * (float)State::deltaTime_;
 }
 
 void Camera::jump(){
-    //this->pos_ += glm::vec3(0.0f, 1.0f, 0.0f) * deltaTime * speed_;
+    //this->pos_ += glm::vec3(0.0f, 1.0f, 0.0f) * State::deltaTime_ * speed_;
     if(this->jumpCounter_ < 2){
         this->currentSpeed_.y = 10.0f;
         jumpCounter_++;
     }
 }
 
-void Camera::goDownward(float deltaTime){
-    this->pos_ -= glm::vec3(0.0f, 1.0f, 0.0f) * deltaTime * speed_;
+void Camera::goDownward(){
+    this->pos_ -= glm::vec3(0.0f, 1.0f, 0.0f) * (float)State::deltaTime_ * speed_;
 }
 
-void Camera::applyPhysics(float deltaTime, const float baseHeight) {
+void Camera::applyPhysics(const float baseHeight) {
     if(onGround(baseHeight)) {
         if(this->currentSpeed_.y > 0) {
-            this->pos_.y += currentSpeed_.y * deltaTime;
+            this->pos_.y += currentSpeed_.y * State::deltaTime_;
         }
         else{
             this->pos_.y = baseHeight;
@@ -59,8 +59,8 @@ void Camera::applyPhysics(float deltaTime, const float baseHeight) {
         }
     }
     else {
-        this->currentSpeed_ -= this->acceleration_ * deltaTime;
-        this->pos_.y += currentSpeed_.y * deltaTime;
+        this->currentSpeed_ -= this->acceleration_ * (float)State::deltaTime_;
+        this->pos_.y += currentSpeed_.y * State::deltaTime_;
     }
 }
 

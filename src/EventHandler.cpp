@@ -21,16 +21,16 @@ void EventHandler::handleEvents(){
 void EventHandler::handleKeys(){
     // Camera movement
     if(pressed(GLFW_KEY_W)){
-        camera_->goForward(State::deltaTime_);
+        camera_->goForward();
     }
     if(pressed(GLFW_KEY_S)){
-        camera_->goBackward(State::deltaTime_);
+        camera_->goBackward();
     }
     if(pressed(GLFW_KEY_A)){
-        camera_->goLeft(State::deltaTime_);
+        camera_->goLeft();
     }
     if(pressed(GLFW_KEY_D)){
-        camera_->goRight(State::deltaTime_);
+        camera_->goRight();
     }
     if(pressed(GLFW_KEY_Q) && releasedJump_){
         std::cout << "SPACE" << std::endl;
@@ -41,7 +41,7 @@ void EventHandler::handleKeys(){
         releasedJump_ = true;
     }
     if(pressed(GLFW_KEY_LEFT_SHIFT)){
-        camera_->goDownward(State::deltaTime_);
+        camera_->goDownward();
     }
 
     // State changes

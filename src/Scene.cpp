@@ -103,7 +103,7 @@ void Scene::drawScene(){
     deltaTime_ = State::deltaTime_;
     frameCounter_++;
 
-    physicsEngine_->updateWorldPhysics(deltaTime_);
+    physicsEngine_->updateWorldPhysics();
     if(State::picking_){
         GLdouble xpos, ypos;
         glfwGetCursorPos(window_, &xpos, &ypos);
@@ -149,7 +149,7 @@ void Scene::drawScene(){
     }
 
     const double currentHeight = terrain_.getHeight(camera_.getPos().x, camera_.getPos().z);
-    camera_.applyPhysics(deltaTime_, -10.0f + 1.3f);
+    camera_.applyPhysics(-10.0f + 1.3f);
 
     viewMatrix_ = camera_.lookAt();
     modelMatrix_ = glm::mat4(1.0f);

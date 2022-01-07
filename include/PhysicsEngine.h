@@ -24,7 +24,7 @@ class PhysicsEngine{
     void addTerrain(Terrain* terrain);
     void addHeightField(Terrain* terrain);
 
-    void updateWorldPhysics(double deltaTime);
+    void updateWorldPhysics();
 
     btDiscreteDynamicsWorld* getDynamicsWorld() { return dynamicsWorld_; }
 
