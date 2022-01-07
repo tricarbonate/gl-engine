@@ -11,7 +11,7 @@
 #include "Model.h"
 #include "Terrain.h"
 
-/* 
+/*
  * This class knows about all world Objects, define and updates physical properties
  * of these objects, and connect these information with Bullet Physics Engine.
  */

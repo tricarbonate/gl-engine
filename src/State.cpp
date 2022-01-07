@@ -24,3 +24,5 @@ bool State::useHDR_ = true;
 bool State::useGammaCorrection_ = false;
 Effect State::postProcessingEffect_ = NO_EFFECT;
 
+double State::deltaTime_ = 0.0;
+

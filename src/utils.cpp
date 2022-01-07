@@ -6,8 +6,8 @@ int failed(std::string message){
   return 1;
 }
 
-float getDeltaTime(float &lastFrame){
-  float currentFrame= (float)glfwGetTime();
+double getDeltaTime(float &lastFrame){
+  float currentFrame = (float)glfwGetTime();
   float deltaTime = currentFrame - lastFrame;
   lastFrame = currentFrame;
   return deltaTime;
@@ -27,7 +27,7 @@ void printStateReport(GLFWwindow* window, double deltaTime, int nFrames){
     std::cout << "--REPORT--" << std::endl;
     std::cout << double(deltaCount / nFrames) * 1000 << " ms/frame" << std::endl;
     std::string str = State::picking_ == true ? "YES" : "NO";
-    std::cout << "Currently picking : " << str << std::endl; 
+    std::cout << "Currently picking : " << str << std::endl;
     deltaCount = 0;
     frameCount = 0;
     std::cout << std::endl;
@@ -48,26 +48,26 @@ std::string report(GLFWwindow* window, double deltaTime, int nFrames){
     GLdouble xpos, ypos;
     glfwGetCursorPos(window, &xpos, &ypos);
     finalStr += "Currently picking : " + isPicking + "\n";
-    finalStr += "Using Flat Shading : " + flatShading + "\n"; 
-    finalStr += "Cursor:   X: " + std::to_string(xpos) + " | Y: " + std::to_string(ypos) + "\n"; 
+    finalStr += "Using Flat Shading : " + flatShading + "\n";
+    finalStr += "Cursor:   X: " + std::to_string(xpos) + " | Y: " + std::to_string(ypos) + "\n";
     deltaCount = 0;
     frameCount = 0;
   }
-  
+
 
   return finalStr;
 }
 
-GLFWwindow* initializeWindow(const unsigned int windowHeight, const unsigned int windowWidth){ 
+GLFWwindow* initializeWindow(const unsigned int windowHeight, const unsigned int windowWidth){
 
   //glfwWindowHint(GLFW_SAMPLES, 4);
-  
+
   GLFWwindow *window = glfwCreateWindow(windowWidth, // window width
       windowHeight, // window height
       "test", // window title
       NULL,
       NULL);
-  
+
 
   glfwMakeContextCurrent(window); // define the context.
   return window;
@@ -96,9 +96,9 @@ int initializeGlfw(){
 
   //setting opengl version:
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3); 
-  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); 
-  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); 
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
   return 0;
 }

@@ -10,13 +10,13 @@ class EventHandler{
     EventHandler(GLFWwindow* window, Camera* camera);
     ~EventHandler();
 
-    void handleEvents(float deltaTime);
+    void handleEvents();
 
     static void resetLastMousePos();
 
   private:
   
-    void handleKeys(float deltaTime);
+    void handleKeys();
     void handleMouse();
 
     bool pressed(int key);

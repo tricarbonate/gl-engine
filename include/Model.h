@@ -26,11 +26,11 @@ class Model {
     Model();
     Model(std::string mesh, const char* shaderName, ShaderProgram* shaderProgram,
         glm::vec3 position, COLLISION_SHAPES type = CUBE);
-    
+
     void draw();
 
     std::pair<const char*, ShaderProgram*> getShaderProgram() const { return shaderProgram_; }
-    
+
     // getters
     Mesh* getMesh() { return mesh_; }
     btRigidBody* getRigidBody() { return body_; }
@@ -51,13 +51,16 @@ class Model {
     void initPhysics(btDiscreteDynamicsWorld* dynamicsWorld, COLLISION_SHAPES shape, double data = 0.5);
 
   protected:
+
+    void addAllPoints();
+
     // pointer to the mesh representing the model
     Mesh* mesh_;
-    
+
     // pointer to the shader program
     // used to render the model:
     std::pair<const char*, ShaderProgram*> shaderProgram_;
-    
+
     glm::vec<3, double, glm::defaultp> position_;
     glm::vec<3, double, glm::defaultp> orientation_; // object orientation on its axis
     glm::vec<3, double, glm::defaultp> currentSpeed_;

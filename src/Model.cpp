@@ -28,19 +28,19 @@ void Model::draw(){
   shaderProgram_.second->setUniform("material.shininess", mesh_->getMaterial().shininess);
   glActiveTexture(GL_TEXTURE0);
 
-  mesh_->renderMesh();  
+  mesh_->renderMesh();
 }
 
 void Model::updatePosition(btTransform trans){
-  position_.r = (double)trans.getOrigin().getX();
-  position_.g = (double)trans.getOrigin().getY();
-  position_.b = (double)trans.getOrigin().getZ();
+  position_.x = (double)trans.getOrigin().getX();
+  position_.y = (double)trans.getOrigin().getY();
+  position_.z = (double)trans.getOrigin().getZ();
 
   btScalar angles[3];
   trans.getRotation().getEulerZYX(angles[2], angles[1], angles[0]);
-  orientation_.r = angles[0];
-  orientation_.g = angles[1];
-  orientation_.b = angles[2];
+  orientation_.x = angles[0];
+  orientation_.y = angles[1];
+  orientation_.z = angles[2];
 
   //body_->setWorldTransform(trans);
 }
@@ -56,9 +56,11 @@ void Model::initPhysics(btDiscreteDynamicsWorld* dynamicsWorld, COLLISION_SHAPES
   else if (shape == COLLISION_SHAPES::CONVEX_HULL){
     collisionShape_ = new btConvexHullShape(
         mesh_->getVerticesCoordinates(), mesh_->getNumVertices(), 3 * sizeof(btScalar) );
+    /* collisionShape_ = new btConvexHullShape(); */
+    /* this->mesh_->addAllPoints((btConvexHullShape*)collisionShape_); */
   }
   else if (shape == COLLISION_SHAPES::TRIANGLE_MESH){
-    
+
 	btTriangleIndexVertexArray* PhysicsMeshInterface =
 		new btTriangleIndexVertexArray(mesh_->getIndices().size() / 3,
 		(GLint*)&mesh_->getIndices()[0],
@@ -70,12 +72,12 @@ void Model::initPhysics(btDiscreteDynamicsWorld* dynamicsWorld, COLLISION_SHAPES
 
      collisionShape_ = new btBvhTriangleMeshShape(PhysicsMeshInterface, false);
   }
-  
+
   btTransform startTransform;
   startTransform.setIdentity();
   btVector3 initialPosition = btVector3(position_.r, position_.g, position_.b);
   startTransform.setOrigin(initialPosition);
-  
+
   btScalar mass(100.f);
 
   bool isDynamic = (mass != 0.f);

@@ -10,7 +10,7 @@
 
 #include <bullet/btBulletDynamicsCommon.h>
 
-class Mesh 
+class Mesh
 {
   public:
     Mesh();
@@ -25,6 +25,8 @@ class Mesh
     void createInstanced(std::vector<glm::vec3> offsets);
 
     void renderMesh();
+
+    void addAllPoints(btConvexHullShape* collisionShape);
 
     // getters
     Material& getMaterial() { return material_; }

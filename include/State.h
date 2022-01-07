@@ -2,7 +2,7 @@
 #define __STATE_H__
 
 #include "Singleton.h"
-#include "glm/common.hpp" 
+#include "glm/common.hpp"
 
 enum Effect {
   NO_EFFECT = 0,
@@ -12,15 +12,15 @@ enum Effect {
   KERNEL_EFFECT = 4
 };
 
-class State : 
+class State :
   public Singleton<State>
 {
   public:
-  
+
     // State variables
     //
     static bool terrainFlatShading_;
-    static bool perspective_; 
+    static bool perspective_;
     static bool cursorDisabled_;
     static bool fullScreenMode_;
     static unsigned int nMaxModels;
@@ -43,6 +43,8 @@ class State :
     static bool useHDR_;
     static bool useGammaCorrection_;
     static Effect postProcessingEffect_;
+
+    static double deltaTime_;
 
   private:
     State();

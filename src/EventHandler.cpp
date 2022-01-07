@@ -12,25 +12,25 @@ EventHandler::~EventHandler(){
 
 }
 
-void EventHandler::handleEvents(float deltaTime){
-    handleKeys(deltaTime);
+void EventHandler::handleEvents(){
+    handleKeys();
     handleMouse();
 }
 
 
-void EventHandler::handleKeys(float deltaTime){
+void EventHandler::handleKeys(){
     // Camera movement
     if(pressed(GLFW_KEY_W)){
-        camera_->goForward(deltaTime);
+        camera_->goForward(State::deltaTime_);
     }
     if(pressed(GLFW_KEY_S)){
-        camera_->goBackward(deltaTime);
+        camera_->goBackward(State::deltaTime_);
     }
     if(pressed(GLFW_KEY_A)){
-        camera_->goLeft(deltaTime);
+        camera_->goLeft(State::deltaTime_);
     }
     if(pressed(GLFW_KEY_D)){
-        camera_->goRight(deltaTime);
+        camera_->goRight(State::deltaTime_);
     }
     if(pressed(GLFW_KEY_Q) && releasedJump_){
         std::cout << "SPACE" << std::endl;
@@ -41,7 +41,7 @@ void EventHandler::handleKeys(float deltaTime){
         releasedJump_ = true;
     }
     if(pressed(GLFW_KEY_LEFT_SHIFT)){
-        camera_->goDownward(deltaTime);
+        camera_->goDownward(State::deltaTime_);
     }
 
     // State changes

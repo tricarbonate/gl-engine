@@ -23,7 +23,7 @@
 
 int failed(std::string message);
 
-float getDeltaTime(float &lastFrame);
+double getDeltaTime(float &lastFrame);
 
 void printStateReport(GLFWwindow* window, double deltaTime, int nFrame);
 std::string report(GLFWwindow* window, double deltaTime, int nFrames);

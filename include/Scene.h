@@ -34,7 +34,7 @@ class Scene{
     ~Scene();
 
     void setupScene();
-    void drawScene(float deltaTime);
+    void drawScene();
 
     Camera* getCamera() { return &camera_; }
 
