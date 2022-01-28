@@ -34,6 +34,7 @@ class State :
     static float farPlane_;
     static float tanFov_;
     static float fov_;
+    static bool firstPerson_; // first person or third person view
 
     // Screen/Window information
     static float screenWidth_;

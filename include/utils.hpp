@@ -34,6 +34,9 @@ int initializeGlew(GLFWwindow *window);
 
 int initializeGlfw();
 
+template<class T>
+void setOneTime(T& variable, T defaultValue, T newValue);
+
 // function that generates a random vec3 with values in between min and max
 glm::vec3 randomVec3(double min, double max, glm::vec3 xyz = glm::vec3(1, 1, 1));
 

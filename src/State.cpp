@@ -16,6 +16,7 @@ float State::nearPlane_ = 1.0f;
 float State::farPlane_ = 1000.0f;
 float State::fov_ = 45.0f;
 float State::tanFov_ = tan(0.5 * fov_);
+bool State::firstPerson_ = true;
 
 float State::screenWidth_ = 1600;
 float State::screenHeight_ = 1200;

@@ -13,6 +13,16 @@ double getDeltaTime(float &lastFrame){
   return deltaTime;
 }
 
+template<class T>
+void setOneTime(T& variable, T defaultValue, T newValue) {
+    if (variable == defaultValue) {
+        variable = newValue;
+    }
+    else {
+        variable = defaultValue;
+    }
+}
+
 void printMSperFrame(double deltaTime){
 }
 

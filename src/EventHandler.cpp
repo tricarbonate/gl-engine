@@ -85,6 +85,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         }
         State::cursorDisabled_ = !State::cursorDisabled_;
     }
+
+    if(key == GLFW_KEY_V && action == GLFW_PRESS) {
+        State::firstPerson_ = !State::firstPerson_;
+    }
 }
 
 

@@ -37,11 +37,11 @@ void Camera::goRight(){
 }
 
 void Camera::jump(){
-    //this->pos_ += glm::vec3(0.0f, 1.0f, 0.0f) * State::deltaTime_ * speed_;
-    if(this->jumpCounter_ < 2){
-        this->currentSpeed_.y = 10.0f;
-        jumpCounter_++;
+    if(this->jumpCounter_ >= 2){
+        return;
     }
+    this->currentSpeed_.y = 10.0f;
+    jumpCounter_++;
 }
 
 void Camera::goDownward(){
@@ -50,10 +50,10 @@ void Camera::goDownward(){
 
 void Camera::applyPhysics(const float baseHeight) {
     if(onGround(baseHeight)) {
-        if(this->currentSpeed_.y > 0) {
+        if(greater_than(this->currentSpeed_.y, 0)) {
             this->pos_.y += currentSpeed_.y * State::deltaTime_;
         }
-        else{
+        else {
             this->pos_.y = baseHeight;
             jumpCounter_ = 0;
         }
@@ -65,10 +65,20 @@ void Camera::applyPhysics(const float baseHeight) {
 }
 
 glm::mat4 Camera::lookAt(){
-    return glm::lookAt(
-            pos_,
-            pos_ + front_,
-            up_);
+    if(State::firstPerson_) {
+        return glm::lookAt(
+                pos_,
+                pos_ + front_,
+                up_);
+    }
+
+    else {
+        glm::vec3 front = glm::vec3(front_.x * 7, front_.y * 7, front_.z * 7);
+        return glm::lookAt(
+                pos_ - front,
+                pos_ + front_,
+                up_);
+    }
 }
 
 void Camera::resetLastMousePos(){
@@ -114,7 +124,12 @@ void Camera::updateOrientation(double xpos, double ypos, bool constrainPitch)
     direction.x = (float)(cos(glm::radians(yaw_)) * cos(glm::radians(pitch_)));
     direction.y = (float)(sin(glm::radians(pitch_)));
     direction.z = (float)(sin(glm::radians(yaw_)) * cos(glm::radians(pitch_)));
+    /* if(State::firstPerson_) { */
     front_ = glm::normalize(direction);
+    /* } */
+    /* else { */
+    /*     front_ = glm::normalize(glm::vec3(direction.x, 0, direction.z)); */
+    /* } */
     right_ = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), front_));
     up_ = glm::normalize(glm::cross(front_, right_));
 }

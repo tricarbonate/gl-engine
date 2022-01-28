@@ -157,7 +157,12 @@ void Scene::drawScene(){
 
     lights_[1].setPosition(glm::vec3(camera_.getPos().x, camera_.getPos().y - 0.5f, camera_.getPos().z));
     lights_[1].setPosition(lights_[1].getPosition() - camera_.getRight() * 0.1f);
-    lights_[1].setDirection(camera_.getFront().x, camera_.getFront().y, camera_.getFront().z);
+    if(State::firstPerson_){
+        lights_[1].setDirection(camera_.getFront().x, camera_.getFront().y, camera_.getFront().z);
+    }
+    else {
+        lights_[1].setDirection(camera_.getFront().x, 0, camera_.getFront().z);
+    }
     //lights_[1].setIntensity(1);
 
     drawEntities();
